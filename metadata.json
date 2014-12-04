@@ -8,7 +8,14 @@
   "project_page": "https://github.com/tykeal/puppet-gerrit",
   "issues_url": "https://github.com/tykeal/puppet-gerrit/issues",
   "dependencies": [
-    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+    {
+      "name": "puppetlabs-stdlib",
+      "version_requirement": ">= 4.4.0"
+    },
+    {
+      "name": "puppetlabs-mysql",
+      "version_requirement": ">= 3.0.0"
+    }
   ]
 }
 
