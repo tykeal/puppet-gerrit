@@ -2,5 +2,6 @@ fixtures:
   repositories:
     stdlib: "git://github.com/puppetlabs/puppetlabs-stdlib.git"
     mysql: "git://github.com/puppetlabs/puppetlabs-mysql.git"
+    firewall: "git://github.com/puppetlabs/puppetlabs-firewall.git"
   symlinks:
     gerrit: "#{source_dir}"
