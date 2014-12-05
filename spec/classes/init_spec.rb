@@ -3,5 +3,9 @@ describe 'gerrit' do
 
   context 'with defaults for all parameters' do
     it { should contain_class('gerrit') }
+    it { should contain_class('gerrit::params') }
   end
 end
+
+
+# vim: ts=2 sw=2 sts=2 et :
