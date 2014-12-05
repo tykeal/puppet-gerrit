@@ -1,4 +1,4 @@
-# gerrit
+# Gerrit Module
 
 #### Table of Contents
 
@@ -15,65 +15,62 @@
 
 ## Overview
 
-A one-maybe-two sentence summary of what the module does/what problem it solves.
-This is your 30 second elevator pitch for your module. Consider including
-OS/Puppet version it works with.
+[![Build Status](https://travis-ci.org/tykeal/puppet-gerrit.png)](https://travis-ci.org/tykeal/puppet-gerrit)
+
+This module installs and configures a Gerrit system. It is intended to
+work with Puppet >= v3.7 as that is what it is developed against.
 
 ## Module Description
 
-If applicable, this section should have a brief description of the technology
-the module integrates with and what that integration enables. This section
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?"
+The Gerrit module provides an easy way of standing up a
+[Gerrit](https://code.google.com/p/gerrit/) server, an open source web
+based code review system.
 
-If your module has a range of functionality (installation, configuration,
-management, etc.) this is the time to mention it.
+The optional MySQL integration works with the puppetlabs-mysql module to
+export a database configuration for automatic pick-up and creation of
+the database. If this option is desired the the database server will be
+probed to see if it is available before starting the Gerrit service.
+Because of this, it's possible to see some failed puppet runs until
+everything is operational.
+
+The module may optionally modify the firewall for the web and ssh
+services.
+
+You may optionally manage your Gerrit site Header, Footer and CSS as
+well as the static resources.
 
 ## Setup
 
 ### What gerrit affects
 
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form.
+* The gerrit service will be installed and managed
+* Gerrit site Header, Footer and CSS may be optionally managed. If they
+  are not managed then dummy files will be put in place (also optional)
+  so that adding managed files later will not require a restart.
+* May optionally manage the firewall rules for access to Gerrit
+  resources
+* May optionally handle setting up the database (potential cross-system
+  dependencies)
 
-### Setup Requirements **OPTIONAL**
+### Setup Requirements
 
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
+* `puppetlabs/mysql` 3.0.0 is required for the optional MySQL management
+  as well as store configs enabled.
+* `puppetlabs/firewall` 1.2.0 is required for the optional firewall
+  management
 
 ### Beginning with gerrit
 
-The very basic steps needed for a user to get the module up and running.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you may wish to include an additional section here: Upgrading
-(For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
+```puppet
+class { 'gerrit': }
+```
 
 ## Usage
 
-Put the classes, types, and resources for customizing, configuring, and doing
-the fancy stuff with your module here.
 
 ## Reference
 
-Here, list the classes, types, providers, facts, etc contained in your module.
-This section should include all of the under-the-hood workings of your module so
-people know what the module is touching on their system but don't need to mess
-with things. (We are working on automating this section!)
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc.
-
-## Development
-
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
-
-## Release Notes/Contributors/Etc **Optional**
-
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You may also add any additional sections you feel are
-necessary or important to include here. Please use the `## ` header.
+Tested against RedHat / CentOS v7
