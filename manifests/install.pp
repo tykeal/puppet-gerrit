@@ -59,7 +59,7 @@ class gerrit::install {
       "${gerrit_home}/plugins",
       "${gerrit_home}/static",
       "${gerrit_home}/tmp",
-      "${gitpath}",
+      $gitpath,
     ]:
     ensure  => directory,
     owner   => $gerrit_user,
