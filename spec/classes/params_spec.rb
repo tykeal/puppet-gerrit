@@ -1,8 +1,8 @@
 require 'spec_helper'
 describe 'gerrit::params' do
 
-  context 'with defaults for all parameters' do
-    it { should contain_class('gerrit::params') }
+  context 'with defaults' do
+    it { is_expected.to contain_class('gerrit::params') }
   end
 end
 

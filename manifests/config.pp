@@ -1,0 +1,2 @@
+class gerrit::config {
+}
