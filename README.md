@@ -44,6 +44,8 @@ well as the static resources.
 ### What gerrit affects
 
 * The gerrit service will be installed and managed
+* May optionally install java (NOTE: java is required for Gerrit to work)
+* May optionally install git (NOTE: git is required for Gerrit to work)
 * Gerrit site Header, Footer and CSS may be optionally managed. If they
   are not managed then dummy files will be put in place (also optional)
   so that adding managed files later will not require a restart.
@@ -54,8 +56,14 @@ well as the static resources.
 
 ### Setup Requirements
 
+* `puppetlabs/git` is required for the optional git installation. If you
+  wish to manage git via a different module / method make sure to set
+  $manage_git to false
+* `puppetlabs/java` >= v1.2.0 is required for the optional java
+  installation. If you wish to use manage java via a different module /
+  method make sure to set $manage_java to false
 * `puppetlabs/mysql` 3.0.0 is required for the optional MySQL management
-  as well as store configs enabled.
+  as well as having store configs enabled.
 * `puppetlabs/firewall` 1.2.0 is required for the optional firewall
   management
 
