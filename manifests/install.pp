@@ -46,8 +46,10 @@ class gerrit::install {
     system     => true,
   }
 
-  # setup the installation directory structure
+  # setup the installation directory structure and git storage
   $gerrit_home = $gerrit::gerrit_home
+  $gitpath = $options['gerrit']['basePath']['value']
+  validate_absolute_path($gitpath)
 
   file { [
       "${gerrit_home}/bin",
@@ -57,6 +59,7 @@ class gerrit::install {
       "${gerrit_home}/plugins",
       "${gerrit_home}/static",
       "${gerrit_home}/tmp",
+      "${gitpath}",
     ]:
     ensure  => directory,
     owner   => $gerrit_user,

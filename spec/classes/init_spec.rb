@@ -42,6 +42,7 @@ describe 'gerrit' do
     it { is_expected.to contain_file('/opt/gerrit/plugins') }
     it { is_expected.to contain_file('/opt/gerrit/static') }
     it { is_expected.to contain_file('/opt/gerrit/tmp') }
+    it { is_expected.to contain_file('/srv/gerrit') }
     it { is_expected.to contain_exec('download gerrit 2.9.2') }
     it { is_expected.to contain_exec('download gerrit 2.9.2').with(
         'cwd'     => '/opt/gerrit',
@@ -63,7 +64,7 @@ describe 'gerrit' do
     it { is_expected.to_not contain_class('git') }
   end
 
-  context 'with options[container][user][value] set to foo' do
+  context 'with override_options[container][user][value] set to foo' do
     let(:params) {{ :override_options => {
       'container' => { 'user' => {'value' => 'foo' }}} }}
     it { is_expected.to contain_user('foo') }
@@ -107,6 +108,16 @@ describe 'gerrit' do
         'cwd' => '/var/foo',
         'creates' => '/var/foo/gerrit-2.9.2.war',
         ) }
+  end
+
+  # verify that changing the options[gerrit][basePath][value] changes
+  # the git storage location
+  # No need to verify the permissions / validity of it being a directory
+  # as that has already been tested previously
+  context 'with override_options[gerrit]basePath][value] set to /srv/foo' do
+    let(:params) {{ :override_options => {
+      'gerrit' => { 'basePath' => { 'value' => '/srv/foo' }}} }}
+    it { is_expected.to contain_file('/srv/foo') }
   end
 
   context 'with gerrit_version 2.10.0 and download_location http://foo' do

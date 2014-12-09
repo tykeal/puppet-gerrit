@@ -33,7 +33,7 @@ class gerrit::params {
 
   # gerrit base information
   $user  = 'gerrit'
-  $basepath = '/srv/gerrit/git'
+  $basepath = '/srv/gerrit'
 
   # default gerrit download information
   $gerrit_version    = '2.9.2'
