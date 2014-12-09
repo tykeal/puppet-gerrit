@@ -45,6 +45,7 @@ class gerrit::params {
   # management flags
   $install_git        = true
   $install_java       = true
+  $manage_site_skin   = true
 
   $manage_database = true
 
