@@ -37,6 +37,15 @@
 #   A variable hash for configuration settings of Gerrit. Please see
 #   gerrit::params for the default_options hash
 #
+# [*service_enabled*]
+#   Determines if the mode the service is configured for:
+#     true: (default) service is ensured started and enabled for reboot
+#     false: service is ensured stopped and disabled for reboot
+#     manual: service is configured as a manual service, refreshes /
+#     notifications will behave per normal when a service is configured
+#     with enable => manual. The service is not specifically started or
+#     stopped
+#
 # === Variables
 #
 # No variables are expressly required to be set, there should be sane
@@ -63,7 +72,8 @@ class gerrit (
   $install_git          = $gerrit::params::install_git,
   $install_java         = $gerrit::params::install_java,
   $manage_site_skin     = $gerrit::params::manage_site_skin,
-  $override_options     = {}
+  $override_options     = {},
+  $service_enabled      = $gerrit::params::service_enabled
 ) inherits gerrit::params {
 
   # Make sure that all of the params are properly formated
@@ -75,6 +85,12 @@ class gerrit (
   validate_bool($install_java)
   validate_bool($manage_site_skin)
   validate_hash($override_options)
+
+  unless is_bool($service_enabled) {
+    validate_re($service_enabled, '^manual$',
+      "${service_enabled} is not supported for service_enabled. \
+Allowed values are true, false, 'manual'.")
+  }
 
   # Create a merged together set of options. Rightmost hashes win over left.
   $options = merge($gerrit::params::default_options, $override_options)

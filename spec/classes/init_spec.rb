@@ -204,4 +204,33 @@ describe 'gerrit', :type => :class do
         'source'  => 'puppet:///private/GerritSiteFooter.html',
         ) }
   end
+
+  #####
+  # gerrit::service testing
+  #####
+
+  context 'gerrit::service' do
+    context 'with defaults' do
+      it { is_expected.to contain_service('gerrit').with(
+          :ensure   => true,
+          :enable   => true,
+        ) }
+    end
+
+    context 'service_enabled is incorrect' do
+      let(:params) {{ :service_enabled => 'invalid_val' }}
+      it 'should report an error when service_enabled is incorrect' do
+        expect { subject }.to raise_error(Puppet::Error,
+                                          /invalid_val is not supported for service_enabled\. Allowed values are true, false, 'manual'\./)
+      end
+    end
+
+    context 'service_enabled set to false' do
+      let(:params) {{ :service_enabled => false }}
+
+      it { is_expected.to contain_service('gerrit').with(
+          :ensure => false
+        ) }
+    end
+  end
 end
