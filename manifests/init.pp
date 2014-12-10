@@ -101,11 +101,13 @@ Allowed values are true, false, 'manual'.")
 
   include '::gerrit::install'
   include '::gerrit::config'
+  include '::gerrit::initialize'
   include '::gerrit::service'
 
   Anchor['gerrit::begin'] ->
     Class['gerrit::install'] ->
     Class['gerrit::config'] ->
+    Class['gerrit::initialize'] ->
     Class['gerrit::service'] ->
   Anchor['gerrit::end']
 }

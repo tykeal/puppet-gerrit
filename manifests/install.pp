@@ -72,11 +72,16 @@ class gerrit::install {
   $download_location = $gerrit::download_location
 
   exec { "download gerrit ${gerrit_version}":
-    cwd     => $gerrit_home,
+    cwd     => "${gerrit_home}/bin",
     path    => [ '/usr/bin', '/usr/sbin' ],
     command => "curl -s -O ${download_location}/gerrit-${gerrit_version}.war",
-    creates => "${gerrit_home}/gerrit-${gerrit_version}.war",
+    creates => "${gerrit_home}/bin/gerrit-${gerrit_version}.war",
     user    => $gerrit_user,
     group   => $gerrit_user,
+  }
+
+  file { "${gerrit_home}/bin/gerrit.war":
+    ensure => link,
+    target => "gerrit-${gerrit_version}.war",
   }
 }
