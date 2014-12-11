@@ -1,6 +1,6 @@
 ; MANAGED BY PUPPET
 
-<% @options.sort.map do |section, vars_hash| -%>
+<% @options.sort.map do |section, var_hash| -%>
 <% if section.include? '.' -%>
 <% section_arr = section.split('.') -%>
 [<%= section_arr[0] %> "<%= section_arr[1] %>"]
