@@ -34,7 +34,7 @@ class gerrit::install {
   }
 
   # manage the user
-  $gerrit_user = $options['container']['user']['value']
+  $gerrit_user = $options['container']['user']
   validate_string($gerrit_user)
 
   user { $gerrit_user:
@@ -48,7 +48,7 @@ class gerrit::install {
 
   # setup the installation directory structure and git storage
   $gerrit_home = $gerrit::gerrit_home
-  $gitpath = $options['gerrit']['basePath']['value']
+  $gitpath = $options['gerrit']['basePath']
   validate_absolute_path($gitpath)
 
   file { [

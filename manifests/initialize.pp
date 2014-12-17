@@ -22,7 +22,7 @@
 class gerrit::initialize {
   $options = $gerrit::options
   $gerrit_home = $gerrit::gerrit_home
-  $gerrit_user = $options['container']['user']['value']
+  $gerrit_user = $options['container']['user']
 
   exec { 'gerrit_initialize':
     cwd     => $gerrit_home,

@@ -20,16 +20,24 @@
 #
 class gerrit::service {
 
-  if (is_bool($gerrit::service_enabled)) {
+  $service_enabled = $gerrit::service_enabled
+
+  unless is_bool($service_enabled) {
+    validate_re($service_enabled, '^manual$',
+      "${service_enabled} is not supported for service_enabled. \
+Allowed values are true, false, 'manual'.")
+  }
+
+  if (is_bool($service_enabled)) {
     # $gerrit::service_enabled maps directly to ensure
-    $ensure = $gerrit::service_enabled
+    $ensure = $service_enabled
   }
   else {
     # $gerrit::service_enabled maps only to enable, set ensure to undef
     $ensure = undef
   }
 
-  $enable = $gerrit::service_enabled
+  $enable = $service_enabled
 
   service { 'gerrit':
     ensure     => $ensure,

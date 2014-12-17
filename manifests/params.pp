@@ -66,19 +66,21 @@ class gerrit::params {
   # default options hash
   $default_options = {
     'auth'      => {
-      'type'    => {
-        'value' => $gerrit::params::auth_type,
-      },
+      'type'    => $gerrit::params::auth_type,
     },
     'container' => {
-      'user'    => {
-        'value' => $gerrit::params::user,
-      },
+      'user'    => $gerrit::params::user,
     },
     'gerrit'     => {
-      'basePath' => {
-        'value'  => $gerrit::params::basepath,
-      },
+      'basePath' => $gerrit::params::basepath,
+    },
+  }
+
+  # default secure options hash
+  $default_secure_options = {
+    'auth'                      => {
+      'registerEmailPrivateKey' => 'GENERATE',
+      'restTokenPrivateKey'     => 'GENERATE',
     },
   }
 }

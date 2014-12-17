@@ -9,22 +9,43 @@
 #
 # === Variables
 #
-# [*ensure*]
-#   Ensure if the value is set or unset (defaults to present)
-#
 # [*config_file*]
 #   The pariticular gerrit config file that is to be manipulated
 #   defaults to gerrit.config, required
 #
-# [*section*]
-#   The section of the config file to be manipulated, required
+# [*mode*]
+#   The mode for the configuration file
 #
-# [*variable*]
-#   The variable that is to be set (or unset), required
+# [*options*]
+#   Hash used by the template for creating the resultant file the format
+#   is as follows:
 #
-# [*value*]
-#   The value that the variable is to be set to (or unset from),
-#   required
+#   options = {
+#     'section'    => {
+#       'variable' => {
+#         'value'  => 'variable value',
+#         'ensure' => 'absent',
+#       },
+#     },
+#     'section.subsec' => {
+#       'variable'     => [
+#         {
+#           'value' => 'variable value',
+#         },
+#         {
+#           'value'  => 'variable value2',
+#           'ensure' => 'absent',
+#         },
+#       ],
+#     },
+#   }
+#
+# This will produce a config file similar to the following:
+#
+# [section]
+#
+# [section "subsec"]
+#   variable = variable value
 #
 # === Authors
 #
@@ -36,42 +57,23 @@
 #
 define gerrit::config::git_config (
   $config_file,
-  $section,
-  $variable,
-  $value,
-  $ensure       = 'present',
+  $mode,
+  $options      = {},
 ) {
   # input validation
-  validate_re($ensure, '^(present|absent)$',
-  "${ensure} is not supported for ensure. Allowed values are 'present' \
-and 'absent'.")
-
   validate_absolute_path($config_file)
+  validate_re($mode, '^[0-7]{4}$',
+    "\"${mode}\" is not supported for mode. Allowed values are proper \
+file modes.")
+  validate_hash($options)
 
-  validate_string($section)
-  validate_string($variable)
-  validate_string($value)
+  $gerrit_user = $gerrit::config::gerrit_user
 
-  case $ensure {
-    'present': {
-                $command = "git config -f ${config_file} --add \
-${section}.${variable} '${value}'"
-                $onlyif = "[ `git config -f ${config_file} --get-all \
-${section}.${variable} | grep -c '${value}'` == \"0\" ]"
-                }
-    'absent': {
-                $command = "git config -f ${config_file} --unset \
-${section}.${variable} '${value}'"
-                $onlyif = "[ `git config -f ${config_file} --get-all \
-${section}.${variable} | grep -c '${value}'` == \"1\" ]"
-              }
-    default: { }
-  }
-
-  exec { "${title}-${section}-${variable}-${value}":
-    command => $command,
-    onlyif  => $onlyif,
-    path    => [ '/usr/bin', '/usr/sbin' ],
-    notify  => Class['Gerrit::Service']
+  file { $config_file:
+    ensure  => file,
+    owner   => $gerrit_user,
+    group   => $gerrit_user,
+    mode    => $mode,
+    content => template('gerrit/git.ini.erb'),
   }
 }

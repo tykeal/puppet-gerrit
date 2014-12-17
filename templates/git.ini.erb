@@ -7,17 +7,13 @@
 <% else -%>
 [<%= section %>]
 <% end -%>
-<% var_hash.sort.map do |var, val_hash_arr| -%>
-<% if val_hash_arr.is_a? Array -%>
-<% val_hash_arr.each do |val_hash| -%>
-<% if val_hash['ensure'].nil? or val_hash['ensure'] != 'absent' -%>
-	<%= var %> = <%= val_hash['value'] %>
-<% end -%>
+<% var_hash.sort.map do |var, val_or_arr| -%>
+<% if val_or_arr.is_a? Array -%>
+<% val_or_arr.each do |val| -%>
+	<%= var %> = <%= val %>
 <% end -%>
 <% else -%>
-<% if val_hash_arr['ensure'].nil? or val_hash_arr['ensure'] != 'absent' -%>
-	<%= var %> = <%= val_hash_arr['value'] %>
-<% end -%>
+	<%= var %> = <%= val_or_arr %>
 <% end -%>
 <% end -%>
 

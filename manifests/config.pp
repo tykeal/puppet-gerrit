@@ -20,9 +20,11 @@
 #
 class gerrit::config {
   $options = $gerrit::options
+  $default_secure_options = $gerrit::params::default_secure_options
+  $override_secure_options = $gerrit::override_secure_options
 
   $gerrit_home = $gerrit::gerrit_home
-  $gerrit_user = $options['container']['user']['value']
+  $gerrit_user = $options['container']['user']
   validate_string($gerrit_user)
 
   # install gerrit site skin bits
@@ -77,17 +79,32 @@ class gerrit::config {
   }
 
   # gerrit configuration
-  file { "${gerrit_home}/etc/gerrit.config":
-    ensure => present,
-    owner  => $gerrit_user,
-    group  => $gerrit_user,
-    mode   => '0660',
+  ::gerrit::config::git_config { 'gerrit.config':
+    config_file => "${gerrit_home}/etc/gerrit.config",
+    mode        => '0660',
+    options     => $options,
   }
 
-  file { "${gerrit_home}/etc/secure.config":
-    ensure => present,
-    owner  => $gerrit_user,
-    group  => $gerrit_user,
-    mode   => '0600',
+  # the secure options
+  # auth.{registerEmailPrivateKey,restTokenPrivateKey} vars have the
+  # option to be auto-generated using the create_token_string function.
+  # If their values are set to GENERATE we need to do so
+  $generate_secure_options = {
+    'auth'                      => {
+      'registerEmailPrivateKey' => fqdn_token_string(34),
+      'restTokenPrivateKey'     => fqdn_token_string(34,
+        inline_template('<%= @fqdn.length %>')),
+    },
+  }
+
+  $generated_default_secure_options = merge($default_secure_options,
+    $generate_secure_options)
+  $real_secure_options = merge($generated_default_secure_options,
+    $override_secure_options)
+
+  ::gerrit::config::git_config { 'secure.config':
+    config_file => "${gerrit_home}/etc/secure.config",
+    mode        => '0600',
+    options     => $real_secure_options,
   }
 }

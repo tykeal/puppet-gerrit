@@ -4,7 +4,11 @@ describe 'gerrit', :type => :class do
 
   # Force our osfamily & operatingsystem so that puppetlabs-java
   # doesn't croak on us
-  let(:facts) { {:osfamily => 'RedHat', :operatingsystem => 'Centos'} }
+  let(:facts) { {
+      :fqdn             => 'my.test.com',
+      :osfamily         => 'RedHat',
+      :operatingsystem  => 'Centos'
+    } }
 
   context 'with defaults' do
     it { is_expected.to contain_class('gerrit') }
@@ -69,9 +73,9 @@ describe 'gerrit', :type => :class do
       it { is_expected.to_not contain_class('git') }
     end
 
-    context 'with override_options[container][user][value] set to foo' do
+    context 'with override_options[container][user] set to foo' do
       let(:params) {{ :override_options => {
-        'container' => { 'user' => {'value' => 'foo' }}} }}
+        'container' => { 'user' => 'foo' }} }}
 
       it { is_expected.to contain_user('foo') }
 
@@ -117,13 +121,13 @@ describe 'gerrit', :type => :class do
           ) }
     end
 
-    # verify that changing the options[gerrit][basePath][value] changes
+    # verify that changing the options[gerrit][basePath] changes
     # the git storage location
     # No need to verify the permissions / validity of it being a directory
     # as that has already been tested previously
-    context 'with override_options[gerrit]basePath][value] set to /srv/foo' do
+    context 'with override_options[gerrit]basePath] set to /srv/foo' do
       let(:params) {{ :override_options => {
-        'gerrit' => { 'basePath' => { 'value' => '/srv/foo' }}} }}
+        'gerrit' => { 'basePath' => '/srv/foo' }} }}
 
       it { is_expected.to contain_file('/srv/foo') }
     end
@@ -159,16 +163,21 @@ describe 'gerrit', :type => :class do
         'source'  => 'puppet:///modules/gerrit/skin/GerritSiteFooter.html',
         ) }
     it { is_expected.to contain_file('/opt/gerrit/etc/gerrit.config').with(
-        'ensure'  => 'present',
+        'ensure'  => 'file',
         'owner'   => 'gerrit',
         'group'   => 'gerrit',
         'mode'    => '0660',
         ) }
     it { is_expected.to contain_file('/opt/gerrit/etc/secure.config').with(
-        'ensure'  => 'present',
+        'ensure'  => 'file',
         'owner'   => 'gerrit',
         'group'   => 'gerrit',
         'mode'    => '0600',
+        'content' => "; MANAGED BY PUPPET\n\n[auth]\n\tregisterEmailPrivateKey = mScmLr+OfBFQVPwEWxwrqlF9lXa3j7ExDU\n\trestTokenPrivateKey = datdNYTYs7Msc097wHsCu2RhqGtm1TGj9l\n\n",
+        ) }
+    it { is_expected.to contain_gerrit__config__git_config('gerrit.config').with(
+        'config_file' => '/opt/gerrit/etc/gerrit.config',
+        'mode'        => '0660',
         ) }
 
     context 'with manage_site_skin false' do
@@ -179,11 +188,26 @@ describe 'gerrit', :type => :class do
       it { is_expected.to_not contain_file('/opt/gerrit/etc/GerritSiteFooter.html') }
     end
 
+    context 'with override_secure_options set' do
+      let(:params) {{
+        :override_secure_options => {
+          'auth' => {
+            'registerEmailPrivateKey' => 'foo',
+            'restTokenPrivateKey' => 'bar'
+          }
+        }
+      }}
+
+      it { is_expected.to contain_file('/opt/gerrit/etc/secure.config').with(
+          'content' => "; MANAGED BY PUPPET\n\n[auth]\n\tregisterEmailPrivateKey = foo\n\trestTokenPrivateKey = bar\n\n",
+          ) }
+    end
+
     context 'with custom site skin, home dir, user' do
       let(:params) {{
           :gerrit_home => '/var/foo',
           :override_options => {
-            'container' => { 'user' => { 'value' => 'foo' } }
+            'container' => { 'user' => 'foo' }
           },
           :gerrit_site_options => {
             'GerritSite.css'        => 'puppet:///private/GerritSite.css',
@@ -254,3 +278,6 @@ describe 'gerrit', :type => :class do
     end
   end
 end
+
+# vim: sw=2 ts=2 sts=2 et :
+
