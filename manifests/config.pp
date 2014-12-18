@@ -107,4 +107,6 @@ class gerrit::config {
     mode        => '0600',
     options     => $real_secure_options,
   }
+
+  include ::gerrit::config::db
 }

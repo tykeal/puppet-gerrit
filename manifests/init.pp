@@ -65,12 +65,14 @@
 # Copyright 2014 Andrew Grimberg
 #
 class gerrit (
+  $db_tag                   = '',
   $download_location        = $gerrit::params::download_location,
   $gerrit_home              = $gerrit::params::gerrit_home,
   $gerrit_site_options      = {},
   $gerrit_version           = $gerrit::params::gerrit_version,
   $install_git              = $gerrit::params::install_git,
   $install_java             = $gerrit::params::install_java,
+  $manage_database          = $gerrit::params::manage_database,
   $manage_site_skin         = $gerrit::params::manage_site_skin,
   $override_options         = {},
   $override_secure_options  = {},
@@ -78,12 +80,14 @@ class gerrit (
 ) inherits gerrit::params {
 
   # Make sure that all of the params are properly formated
+  validate_string($db_tag)
   validate_string($download_location)
   validate_absolute_path($gerrit_home)
   validate_hash($gerrit_site_options)
   validate_string($gerrit_version)
   validate_bool($install_git)
   validate_bool($install_java)
+  validate_bool($manage_database)
   validate_bool($manage_site_skin)
   validate_hash($override_options)
   validate_hash($override_secure_options)

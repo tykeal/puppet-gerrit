@@ -233,6 +233,51 @@ describe 'gerrit', :type => :class do
           ) }
     end
 
+    context 'using mysql' do
+      let(:params) {{
+        :db_tag => 'test',
+        :override_options => {
+          'database' => {
+            'type'      => 'MYSQL',
+            'hostname'  => 'db.test.com',
+            'database'  => 'gerrit',
+            'username'  => 'gerrit',
+          }
+        },
+        :override_secure_options => {
+          'database' => {
+            'password' => 'somepassword',
+          },
+        },
+      }}
+
+      it { is_expected.to contain_class('gerrit::config::db::mysql') }
+
+      # We can't test for exported resources :(
+      #it { is_expected.to contain_class('mysql::db') }
+    end
+
+    context 'using posgresql' do
+      let(:params) {{
+        :db_tag => 'test',
+        :override_options => {
+          'database' => {
+            'type'      => 'POSTGRESQL',
+            'hostname'  => 'db.test.com',
+            'database'  => 'gerrit',
+            'username'  => 'gerrit',
+          }
+        },
+        :override_secure_options => {
+          'database' => {
+            'password' => 'somepassword',
+          },
+        },
+      }}
+
+      it { is_expected.to contain_class('gerrit::config::db::postgresql') }
+    end
+
   end
 
   #####

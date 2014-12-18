@@ -32,15 +32,15 @@ class gerrit::params {
                           ]
 
   # gerrit base information
-  $user  = 'gerrit'
-  $basepath = '/srv/gerrit'
+  $user               = 'gerrit'
+  $basepath           = '/srv/gerrit'
 
   # default gerrit download information
-  $gerrit_version    = '2.9.2'
-  $download_location = 'https://gerrit-releases.storage.googleapis.com'
+  $gerrit_version     = '2.9.2'
+  $download_location  = 'https://gerrit-releases.storage.googleapis.com'
 
   # location information
-  $gerrit_home    = '/opt/gerrit'
+  $gerrit_home        = '/opt/gerrit'
 
   # management flags
   $install_git        = true
@@ -48,7 +48,7 @@ class gerrit::params {
   $manage_site_skin   = true
   $service_enabled    = true
 
-  $manage_database = true
+  $manage_database    = true
 
   # database information
   $database_hostname          = undef
