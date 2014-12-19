@@ -78,6 +78,13 @@ class gerrit::config {
     }
   }
 
+  # link up the service script
+  file { 'gerrit_init_script':
+    ensure => link,
+    path   => '/etc/init.d/gerrit',
+    target => "${gerrit_home}/bin/gerrit.sh",
+  }
+
   # gerrit configuration
   ::gerrit::config::git_config { 'gerrit.config':
     config_file => "${gerrit_home}/etc/gerrit.config",
