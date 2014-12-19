@@ -79,9 +79,4 @@ class gerrit::install {
     user    => $gerrit_user,
     group   => $gerrit_user,
   }
-
-  file { "${gerrit_home}/bin/gerrit.war":
-    ensure => link,
-    target => "gerrit-${gerrit_version}.war",
-  }
 }

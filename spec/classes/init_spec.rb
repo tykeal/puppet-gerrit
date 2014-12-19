@@ -57,10 +57,6 @@ describe 'gerrit', :type => :class do
         'user'    => 'gerrit',
         'group'   => 'gerrit',
         ) }
-    it { is_expected.to contain_file('/opt/gerrit/bin/gerrit.war').with(
-        'ensure'  => 'link',
-        'target'  => 'gerrit-2.9.2.war',
-        ) }
 
     context 'with install_java false' do
       let(:params) {{ :install_java => false }}
@@ -288,7 +284,7 @@ describe 'gerrit', :type => :class do
     context 'with defaults' do
       it { is_expected.to contain_exec('gerrit_initialize').with(
         'cwd'     => '/opt/gerrit',
-        'command' => 'java -jar /opt/gerrit/bin/gerrit.war init --batch && touch /opt/gerrit/.gerrit_setup_complete.txt',
+        'command' => 'java -jar /opt/gerrit/bin/gerrit-2.9.2.war init --batch && touch /opt/gerrit/.gerrit_setup_complete.txt',
         'creates' => '/opt/gerrit/.gerrit_setup_complete.txt',
         'path'    => [ '/usr/bin', '/usr/sbin' ],
       ) }
