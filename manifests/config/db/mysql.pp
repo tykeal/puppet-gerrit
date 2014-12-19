@@ -30,7 +30,6 @@ class gerrit::config::db::mysql {
     validate_string($secure_options['database']['password'])
 
     $database = $options['database']['database']
-    $hostname = $options['database']['hostname']
     $username = $options['database']['username']
     $password = $secure_options['database']['password']
 
@@ -38,7 +37,7 @@ class gerrit::config::db::mysql {
       user     => $username,
       password => $password,
       dbname   => $database,
-      host     => $hostname,
+      host     => $::ipaddress,
       grant    => [ 'ALL' ],
       tag      => $gerrit::db_tag,
     }

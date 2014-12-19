@@ -6,6 +6,7 @@ describe 'gerrit', :type => :class do
   # doesn't croak on us
   let(:facts) { {
       :fqdn             => 'my.test.com',
+      :ipaddress        => '10.0.0.1',
       :osfamily         => 'RedHat',
       :operatingsystem  => 'Centos'
     } }
