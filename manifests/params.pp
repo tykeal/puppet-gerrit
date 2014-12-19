@@ -71,7 +71,7 @@ class gerrit::params {
     },
     'container'  => {
       'user'     => $gerrit::params::user,
-      'javaHome' => $gerrit::java_home,
+      'javaHome' => $gerrit::params::java_home,
     },
     'gerrit'     => {
       'basePath' => $gerrit::params::basepath,
