@@ -41,7 +41,7 @@ class gerrit::params {
 
   # location information
   $gerrit_home        = '/opt/gerrit'
-  $java_home          = '/var/lib/jvm/jre'
+  $java_home          = '/usr/lib/jvm/jre'
 
   # management flags
   $install_git        = true
