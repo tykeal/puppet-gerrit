@@ -181,6 +181,13 @@ describe 'gerrit', :type => :class do
         'path'    => '/etc/init.d/gerrit',
         'target'  => '/opt/gerrit/bin/gerrit.sh',
         ) }
+    it { is_expected.to contain_file('gerrit_defaults').with(
+        'ensure'  => 'file',
+        'owner'   => 'gerrit',
+        'group'   => 'gerrit',
+        'mode'    => '0644',
+        'content' => "GERRIT_SITE=/opt/gerrit\n",
+        ) }
 
     context 'with manage_site_skin false' do
       let(:params) {{ :manage_site_skin => false }}
