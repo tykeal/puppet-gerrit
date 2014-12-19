@@ -41,6 +41,7 @@ class gerrit::params {
 
   # location information
   $gerrit_home        = '/opt/gerrit'
+  $java_home          = '/var/lib/jvm/jre'
 
   # management flags
   $install_git        = true
@@ -68,11 +69,15 @@ class gerrit::params {
     'auth'      => {
       'type'    => $gerrit::params::auth_type,
     },
-    'container' => {
-      'user'    => $gerrit::params::user,
+    'container'  => {
+      'user'     => $gerrit::params::user,
+      'javaHome' => $gerrit::java_home,
     },
     'gerrit'     => {
       'basePath' => $gerrit::params::basepath,
+    },
+    'index'  => {
+      'type' => 'LUCENE',
     },
   }
 
