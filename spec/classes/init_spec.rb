@@ -303,7 +303,7 @@ describe 'gerrit', :type => :class do
     context 'with defaults' do
       it { is_expected.to contain_exec('gerrit_initialize').with(
         'cwd'     => '/opt/gerrit',
-        'command' => 'java -jar /opt/gerrit/bin/gerrit-2.9.3.war init -d /opt/gerrit --batch',
+        'command' => 'java -jar /opt/gerrit/bin/gerrit-2.9.3.war init -d /opt/gerrit --batch && java -jar /opt/gerrit/bin/gerrit.war reindex -d /opt/gerrit',
         'creates' => '/srv/gerrit/All-Projects.git/HEAD',
         'path'    => [ '/usr/bin', '/usr/sbin' ],
         'user'    => 'gerrit',

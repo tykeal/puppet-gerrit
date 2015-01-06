@@ -30,7 +30,8 @@ class gerrit::initialize {
     cwd     => $gerrit_home,
     path    => [ '/usr/bin', '/usr/sbin' ],
     command => "java -jar ${gerrit_home}/bin/gerrit-${gerrit_version}.war \
-init -d ${gerrit_home} --batch",
+init -d ${gerrit_home} --batch && java -jar \
+${gerrit_home}/bin/gerrit.war reindex -d ${gerrit_home}",
     creates => "${gerrit_basepath}/All-Projects.git/HEAD",
     user    => $gerrit_user,
   }
