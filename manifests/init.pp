@@ -29,6 +29,11 @@
 #   Should this module make sure that git is installed? (NOTE: a git
 #   installation is required for Gerrit to be able to operate)
 #
+# [*install_gitweb*]
+#   Should this module make sure that gitweb is installed? (NOTE: This
+#   will use the system package manager to install gitweb but will do no
+#   extra configuration as it will be expected to be managed via gerrit)
+#
 # [*install_java*]
 #   Should this module make sure that a jre is installed? (NOTE: a jre
 #   installation is required for Gerrit to operate)
@@ -71,6 +76,7 @@ class gerrit (
   $gerrit_site_options      = {},
   $gerrit_version           = $gerrit::params::gerrit_version,
   $install_git              = $gerrit::params::install_git,
+  $install_gitweb           = $gerrit::params::install_gitweb,
   $install_java             = $gerrit::params::install_java,
   $manage_database          = $gerrit::params::manage_database,
   $manage_site_skin         = $gerrit::params::manage_site_skin,

@@ -31,6 +31,7 @@ describe 'gerrit', :type => :class do
   context 'gerrit::install' do
     it { is_expected.to contain_class('java') }
     it { is_expected.to contain_class('git') }
+    it { is_expected.to contain_package('gitweb') }
     it { is_expected.to contain_user('gerrit') }
 
     # only need to fully validate one file for properties since the
@@ -68,6 +69,12 @@ describe 'gerrit', :type => :class do
       let(:params) {{ :install_git => false }}
 
       it { is_expected.to_not contain_class('git') }
+    end
+
+    context 'with install_gitweb false' do
+      let(:params) {{ :install_gitweb => false }}
+
+      it { is_expected.to_not contain_package('gitweb') }
     end
 
     context 'with override_options[container][user] set to foo' do

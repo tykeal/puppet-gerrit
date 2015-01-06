@@ -33,6 +33,13 @@ class gerrit::install {
     include '::git'
   }
 
+  # install gitweb if desired
+  if ($gerrit::install_gitweb) {
+    package { 'gitweb':
+      ensure => installed,
+    }
+  }
+
   # manage the user
   $gerrit_user = $options['container']['user']
   validate_string($gerrit_user)
