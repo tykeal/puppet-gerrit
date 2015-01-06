@@ -306,6 +306,7 @@ describe 'gerrit', :type => :class do
         'command' => 'java -jar /opt/gerrit/bin/gerrit-2.9.3.war init --batch && touch /opt/gerrit/.gerrit_setup_complete.txt',
         'creates' => '/opt/gerrit/.gerrit_setup_complete.txt',
         'path'    => [ '/usr/bin', '/usr/sbin' ],
+        'user'    => 'gerrit',
       ) }
     end
   end

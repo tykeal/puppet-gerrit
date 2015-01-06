@@ -31,5 +31,6 @@ class gerrit::initialize {
     command => "java -jar ${gerrit_home}/bin/gerrit-${gerrit_version}.war \
 init --batch && touch ${gerrit_home}/.gerrit_setup_complete.txt",
     creates => "${gerrit_home}/.gerrit_setup_complete.txt",
+    user    => $gerrit_user,
   }
 }
