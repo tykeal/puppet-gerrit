@@ -36,7 +36,7 @@ class gerrit::params {
   $basepath           = '/srv/gerrit'
 
   # default gerrit download information
-  $gerrit_version     = '2.9.2'
+  $gerrit_version     = '2.9.3'
   $download_location  = 'https://gerrit-releases.storage.googleapis.com'
 
   # location information

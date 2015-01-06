@@ -49,11 +49,11 @@ describe 'gerrit', :type => :class do
     it { is_expected.to contain_file('/opt/gerrit/static') }
     it { is_expected.to contain_file('/opt/gerrit/tmp') }
     it { is_expected.to contain_file('/srv/gerrit') }
-    it { is_expected.to contain_exec('download gerrit 2.9.2').with(
+    it { is_expected.to contain_exec('download gerrit 2.9.3').with(
         'cwd'     => '/opt/gerrit/bin',
         'path'    => [ '/usr/bin', '/usr/sbin' ],
-        'command' => 'curl -s -O https://gerrit-releases.storage.googleapis.com/gerrit-2.9.2.war',
-        'creates' => '/opt/gerrit/bin/gerrit-2.9.2.war',
+        'command' => 'curl -s -O https://gerrit-releases.storage.googleapis.com/gerrit-2.9.3.war',
+        'creates' => '/opt/gerrit/bin/gerrit-2.9.3.war',
         'user'    => 'gerrit',
         'group'   => 'gerrit',
         ) }
@@ -86,7 +86,7 @@ describe 'gerrit', :type => :class do
             'require'   => 'User[foo]',
             ) }
 
-      it { is_expected.to contain_exec('download gerrit 2.9.2').with(
+      it { is_expected.to contain_exec('download gerrit 2.9.3').with(
           'user'  => 'foo',
           'group' => 'foo',
           ) }
@@ -112,9 +112,9 @@ describe 'gerrit', :type => :class do
       it { is_expected.to contain_file('/var/foo/plugins') }
       it { is_expected.to contain_file('/var/foo/static') }
       it { is_expected.to contain_file('/var/foo/tmp') }
-      it { is_expected.to contain_exec('download gerrit 2.9.2').with(
+      it { is_expected.to contain_exec('download gerrit 2.9.3').with(
           'cwd' => '/var/foo/bin',
-          'creates' => '/var/foo/bin/gerrit-2.9.2.war',
+          'creates' => '/var/foo/bin/gerrit-2.9.3.war',
           ) }
     end
 
@@ -296,7 +296,7 @@ describe 'gerrit', :type => :class do
     context 'with defaults' do
       it { is_expected.to contain_exec('gerrit_initialize').with(
         'cwd'     => '/opt/gerrit',
-        'command' => 'java -jar /opt/gerrit/bin/gerrit-2.9.2.war init --batch && touch /opt/gerrit/.gerrit_setup_complete.txt',
+        'command' => 'java -jar /opt/gerrit/bin/gerrit-2.9.3.war init --batch && touch /opt/gerrit/.gerrit_setup_complete.txt',
         'creates' => '/opt/gerrit/.gerrit_setup_complete.txt',
         'path'    => [ '/usr/bin', '/usr/sbin' ],
       ) }
