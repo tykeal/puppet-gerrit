@@ -78,7 +78,7 @@ class gerrit::params {
       'basePath' => $gerrit::params::basepath,
     },
     'index'  => {
-      'type' => 'SQL',
+      'type' => 'LUCENE',
     },
   }
 
