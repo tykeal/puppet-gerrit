@@ -51,7 +51,7 @@ class gerrit::config::firewall {
     }
 
     $listenUrl_arr = split($listenUrl, '[:/]')
-    $listenUrl_port = $listenUrl_arr[size($listenUrl_arr)-1]
+    $listenUrl_port = $listenUrl_arr[4]
     $listenUrl_addr = $listenUrl_arr[3]
 
     case $listenUrl_addr {
