@@ -49,6 +49,7 @@ well as the static resources.
 * Gerrit site Header, Footer and CSS may be optionally managed. If they
   are not managed then dummy files will be put in place (also optional)
   so that adding managed files later will not require a restart.
+* May optionally install gitweb
 * May optionally manage the firewall rules for access to Gerrit
   resources
 * May optionally handle setting up the database (potential cross-system
@@ -62,9 +63,9 @@ well as the static resources.
 * `puppetlabs/java` >= v1.2.0 is required for the optional java
   installation. If you wish to use manage java via a different module /
   method make sure to set $manage_java to false
-* `puppetlabs/mysql` 3.0.0 is required for the optional MySQL management
+* `puppetlabs/mysql` >= 3.0.0 is required for the optional MySQL management
   as well as having store configs enabled.
-* `puppetlabs/firewall` 1.2.0 is required for the optional firewall
+* `puppetlabs/firewall` >= 1.2.0 is required for the optional firewall
   management
 
 ### Beginning with gerrit

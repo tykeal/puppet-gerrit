@@ -5,6 +5,10 @@
 #
 # === Parameters
 #
+# [*db_tag*]
+#   The tag to be used by exported database resource records so that a
+#   collecting system may easily pick up the database resource
+#
 # [*download_location*]
 #   Base location for downloading the Gerrit war from
 #
@@ -13,21 +17,26 @@
 #
 # [*gerrit_site_options*]
 #   Override options for installation of the 3 Gerrit site files. The
-#   format of this option array is as follows:
+#   format of this option hash is as follows:
 #   gerrit_site_options       => {
 #     'GerritSite.css'        => [valid_file_resource_source],
 #     'GerritSiteHeader.html' => [valid_file_resource_source],
 #     'GerritSiteFooter.html' => [valid_file_resource_source],
 #   }
 #
-#   If an option is not present then the default "blank" file will be used
+#   If an option is not present then the default "blank" file will be
+#   used.
+#
+#   This hash is only used if manage_site_skin is true (default)
 #
 # [*gerrit_version*]
 #   The version of the Gerrit war that will be downloaded
 #
 # [*install_git*]
 #   Should this module make sure that git is installed? (NOTE: a git
-#   installation is required for Gerrit to be able to operate)
+#   installation is required for Gerrit to be able to operate. If this
+#   is enabled [the default] then a module named ::git will be included
+#   puppetlabs/git is the expected module)
 #
 # [*install_gitweb*]
 #   Should this module make sure that gitweb is installed? (NOTE: This
@@ -36,15 +45,34 @@
 #
 # [*install_java*]
 #   Should this module make sure that a jre is installed? (NOTE: a jre
-#   installation is required for Gerrit to operate)
+#   installation is required for Gerrit to operate. If this is enabled
+#   [the default] then a module named ::java will be included
+#   puppetlabs/java is the expected module)
+#
+# [*manage_database*]
+#   Should the database be managed. The default option of true means
+#   that if a mysql or postgresql database are detected in the options
+#   then resources will be exported via the
+#   puppetlabs/{mysql,postgresql} module API. A db_tag (see above) needs
+#   to be set as well so that a system picking up the resource can
+#   acquire the appropriate exported resources
+#
+# [*manage_firewall*]
+#   Should the module insert firewall rules for the webUI and SSH?
+#   (NOTE: this requires a module compatible with puppetlabs/firewall)
+#
+# [*manage_site_skin*]
+#   Should the Gerrit site theming be managed by the module. If true
+#   passing an options hash to gerrit_site_options will override the
+#   default "blank" skin files.
 #
 # [*override_options*]
 #   A variable hash for configuration settings of Gerrit. Please see
 #   gerrit::params for the default_options hash
 #
-# [*manage_firewall*]
-#   Should the module insert firewall rules for the webUI and SSH?
-#   (NOTE: this requires a module compatible with puppetlabs/firewall)
+# [*override_secure_option*]
+#   Similar to the override_options hash, this one is used for setting
+#   the options in Gerrit's secure.config
 #
 # [*service_enabled*]
 #   Determines if the mode the service is configured for:
