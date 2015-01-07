@@ -127,4 +127,6 @@ class gerrit::config {
   }
 
   include ::gerrit::config::db
+
+  include ::gerrit::config::firewall
 }

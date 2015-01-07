@@ -42,6 +42,10 @@
 #   A variable hash for configuration settings of Gerrit. Please see
 #   gerrit::params for the default_options hash
 #
+# [*manage_firewall*]
+#   Should the module insert firewall rules for the webUI and SSH?
+#   (NOTE: this requires a module compatible with puppetlabs/firewall)
+#
 # [*service_enabled*]
 #   Determines if the mode the service is configured for:
 #     true: (default) service is ensured started and enabled for reboot
@@ -79,6 +83,7 @@ class gerrit (
   $install_gitweb           = $gerrit::params::install_gitweb,
   $install_java             = $gerrit::params::install_java,
   $manage_database          = $gerrit::params::manage_database,
+  $manage_firewall          = $gerrit::params::manage_firewall,
   $manage_site_skin         = $gerrit::params::manage_site_skin,
   $override_options         = {},
   $override_secure_options  = {},

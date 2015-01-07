@@ -195,6 +195,18 @@ describe 'gerrit', :type => :class do
         'mode'    => '0644',
         'content' => "GERRIT_SITE=/opt/gerrit\n",
         ) }
+    it { is_expected.to contain_firewall('050 gerrit webui access').with(
+        'proto'   => 'tcp',
+        'state'   => ['NEW'],
+        'action'  => 'accept',
+        'port'    => ['8080'],
+        ) }
+    it { is_expected.to contain_firewall('050 gerrit ssh access').with(
+        'proto'   => 'tcp',
+        'state'   => ['NEW'],
+        'action'  => 'accept',
+        'port'    => ['29418'],
+        ) }
 
     context 'with manage_site_skin false' do
       let(:params) {{ :manage_site_skin => false }}
@@ -292,6 +304,44 @@ describe 'gerrit', :type => :class do
       }}
 
       it { is_expected.to contain_class('gerrit::config::db::postgresql') }
+    end
+
+    context 'not managing firewall' do
+      let(:params) {{
+        :manage_firewall => false,
+      }}
+
+      it { is_expected.to_not contain_firewall('050 gerrit webui access') }
+      it { is_expected.to_not contain_firewall('050 gerrit ssh access') }
+    end
+
+    context 'firewall with alternative addresses and ports' do
+      let(:params) {{
+        :override_options => {
+          'httpd' => {
+            'listenUrl' => 'http://10.0.0.1:8082/',
+          },
+          'sshd'  => {
+            'listenAddress' => '10.0.0.1:23000',
+          },
+        },
+      }}
+
+      it { is_expected.to contain_firewall('050 gerrit webui access').with(
+          'proto'       => 'tcp',
+          'state'       => ['NEW'],
+          'action'      => 'accept',
+          'destination' => '10.0.0.1',
+          'port'        => ['8082'],
+          ) }
+      it { is_expected.to contain_firewall('050 gerrit ssh access').with(
+          'proto'       => 'tcp',
+          'state'       => ['NEW'],
+          'action'      => 'accept',
+          'destination' => '10.0.0.1',
+          'port'        => ['23000'],
+          ) }
+
     end
 
   end

@@ -47,10 +47,11 @@ class gerrit::params {
   $install_git        = true
   $install_gitweb     = true
   $install_java       = true
+  $manage_database    = true
+  $manage_firewall    = true
   $manage_site_skin   = true
   $service_enabled    = true
 
-  $manage_database    = true
 
   # database information
   $database_hostname          = undef
