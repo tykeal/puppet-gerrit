@@ -8,8 +8,10 @@
   "project_page": "https://github.com/tykeal/puppet-gerrit",
   "issues_url": "https://github.com/tykeal/puppet-gerrit/issues",
   "operatingsystem_support": [
-		"operatingsystem": "RedHat",
-		"operatingsystemrelease": ["7.x"]
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [ "7.0" ]
+    }
   ],
   "dependencies": [
     {
