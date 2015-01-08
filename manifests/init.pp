@@ -70,7 +70,7 @@
 #   A variable hash for configuration settings of Gerrit. Please see
 #   gerrit::params for the default_options hash
 #
-# [*override_secure_option*]
+# [*override_secure_options*]
 #   Similar to the override_options hash, this one is used for setting
 #   the options in Gerrit's secure.config
 #
