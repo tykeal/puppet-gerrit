@@ -4,3 +4,4 @@ notifications:
     - grimbeaj+travisci@gmail.com
 env:
   - PUPPET_VERSION=3.7.3
+  - PUPPET_VERSION=4.0.0
