@@ -8,7 +8,59 @@
 #
 # === Variables
 #
-# This class accepts no variables directly
+# The following variables are required
+#
+# [*db_tag*]
+#   The tag to be used by exported database resource records so that a
+#   collecting system may easily pick up the database resource
+#
+# [*default_secure_options*]
+#   The default_secure_options hash the base gerrit class should be
+#   passing gerrit::params::default_secure_options
+#
+# [*gerrit_home*]
+#   The home directory for the gerrit user / installation path
+#
+# [*gerrit_site_options*]
+#   Override options for installation of the 3 Gerrit site files. The
+#   format of this option hash is as follows:
+#   gerrit_site_options       => {
+#     'GerritSite.css'        => [valid_file_resource_source],
+#     'GerritSiteHeader.html' => [valid_file_resource_source],
+#     'GerritSiteFooter.html' => [valid_file_resource_source],
+#   }
+#
+#   If an option is not present then the default "blank" file will be
+#   used.
+#
+#   This hash is only used if manage_site_skin is true (default)
+#
+# [*manage_database*]
+#   Should the database be managed. The default option of true means
+#   that if a mysql or postgresql database are detected in the options
+#   then resources will be exported via the
+#   puppetlabs/{mysql,postgresql} module API. A db_tag (see above) needs
+#   to be set as well so that a system picking up the resource can
+#   acquire the appropriate exported resources
+#
+# [*manage_firewall*]
+#   Should the module insert firewall rules for the webUI and SSH?
+#   (NOTE: this requires a module compatible with puppetlabs/firewall)
+#
+# [*manage_site_skin*]
+#   Should the Gerrit site theming be managed by the module. If true
+#   passing an options hash to gerrit_site_options will override the
+#   default "blank" skin files.
+#
+# [*options*]
+#   A variable hash for configuration settings of Gerrit. The base class
+#   will take the default options from gerrit::params and combine it
+#   with anything in override_options (if defined) and use that as the
+#   hash that is passed
+#
+# [*override_secure_options*]
+#   The override_secure_options hash that should have been passed to the
+#   base gerrit class
 #
 # === Authors
 #
@@ -18,20 +70,35 @@
 #
 # Copyright 2014 Andrew Grimberg
 #
-class gerrit::config {
-  $options = $gerrit::options
-  $default_secure_options = $gerrit::params::default_secure_options
-  $override_secure_options = $gerrit::override_secure_options
+class gerrit::config (
+  $db_tag,
+  $default_secure_options,
+  $gerrit_home,
+  $gerrit_site_options,
+  $manage_database,
+  $manage_firewall,
+  $manage_site_skin,
+  $options,
+  $override_secure_options,
+) {
+  validate_string($db_tag)
+  validate_hash($default_secure_options)
+  validate_absolute_path($gerrit_home)
+  validate_hash($gerrit_site_options)
+  validate_bool($manage_database)
+  validate_bool($manage_firewall)
+  validate_bool($manage_site_skin)
+  validate_hash($options)
+  validate_hash($override_secure_options)
 
-  $gerrit_home = $gerrit::gerrit_home
   $gerrit_user = $options['container']['user']
   validate_string($gerrit_user)
 
-  # install gerrit site skin bits
-  if ($gerrit::manage_site_skin) {
-    # determine if any useful site options were passed
-    $gerrit_site_options = $gerrit::gerrit_site_options
+  anchor { 'gerrit::config::begin': }
+  anchor { 'gerrit::config::end': }
 
+  # install gerrit site skin bits
+  if ($manage_site_skin) {
     ## GerritSite.css
     if has_key($gerrit_site_options, 'GerritSite.css') {
       validate_string($gerrit_site_options['GerritSite.css'])
@@ -126,7 +193,23 @@ class gerrit::config {
     options     => $real_secure_options,
   }
 
-  include ::gerrit::config::db
+  class { '::gerrit::config::db':
+    db_tag          => $db_tag,
+    manage_database => $manage_database,
+    options         => $options,
+    secure_options  => $real_secure_options,
+  }
 
-  include ::gerrit::config::firewall
+  class { '::gerrit::config::firewall':
+    manage_firewall => $manage_firewall,
+    options         => $options,
+  }
+
+  Anchor['gerrit::config::begin'] ->
+    Class['gerrit::config::db'] ->
+  Anchor['gerrit::config::end']
+
+  Anchor['gerrit::config::begin'] ->
+    Class['gerrit::config::firewall'] ->
+  Anchor['gerrit::config::end']
 }

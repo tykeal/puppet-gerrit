@@ -8,7 +8,17 @@
 #
 # === Variables
 #
-# This class accepts no variables directly
+# The following variables are required
+#
+# [*manage_firewall*]
+#   Should the module insert firewall rules for the webUI and SSH?
+#   (NOTE: this requires a module compatible with puppetlabs/firewall)
+#
+# [*options*]
+#   A variable hash for configuration settings of Gerrit. The base class
+#   will take the default options from gerrit::params and combine it
+#   with anything in override_options (if defined) and use that as the
+#   hash that is passed
 #
 # === Authors
 #
@@ -18,12 +28,17 @@
 #
 # Copyright 2015 Andrew Grimberg
 #
-class gerrit::config::firewall {
-  if ($gerrit::manage_firewall) {
-    $options = $gerrit::options
+class gerrit::config::firewall (
+  $manage_firewall,
+  $options
+) {
+  validate_bool($manage_firewall)
+  validate_hash($options)
 
+  if ($manage_firewall) {
     if ( has_key($options, 'httpd') ) {
       if ( has_key($options['httpd'], 'listenUrl') ) {
+        validate_string($options['httpd']['listenUrl'])
         $listenUrl = $options['httpd']['listenUrl']
       }
       else {
@@ -38,6 +53,7 @@ class gerrit::config::firewall {
 
     if ( has_key($options, 'sshd') ) {
       if ( has_key($options['sshd'], 'listenAddress') ) {
+        validate_string($options['sshd']['listenAddress'])
         $listenAddress = $options['sshd']['listenAddress']
       }
       else {

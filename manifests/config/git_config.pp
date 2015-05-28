@@ -5,7 +5,7 @@
 #
 # === Parameters
 #
-# This class accepts no parameters directly
+# This define accepts no parameters directly
 #
 # === Variables
 #

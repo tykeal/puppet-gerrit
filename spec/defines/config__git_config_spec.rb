@@ -21,20 +21,23 @@ describe 'gerrit::config::git_config', :type => :define do
 
   it 'should report an error when config_file not an absolute path' do
     params.merge!({'config_file' => 'invalid_val'})
-    expect { subject }.to raise_error(Puppet::Error,
-                                      /"invalid_val" is not an absolute path\./)
+    expect { should compile }.to \
+      raise_error(RSpec::Expectations::ExpectationNotMetError,
+        /"invalid_val" is not an absolute path\./)
   end
 
   it 'should report an error when options is not a hash' do
     params.merge!({'options' => 'invalid_val'})
-    expect { subject }.to raise_error(Puppet::Error,
-                                      /"invalid_val" is not a Hash\./)
+    expect { should compile }.to \
+      raise_error(RSpec::Expectations::ExpectationNotMetError,
+        /"invalid_val" is not a Hash\./)
   end
 
   it 'should report an error when mode is not a valid file mode' do
     params.merge!({'mode' => 'invalid_val'})
-    expect { subject }.to raise_error(Puppet::Error,
-                                      /"invalid_val" is not supported for mode\. Allowed values are proper file modes\./)
+    expect { should compile }.to \
+      raise_error(RSpec::Expectations::ExpectationNotMetError,
+        /"invalid_val" is not supported for mode\. Allowed values are proper file modes\./)
   end
 
   context 'config file' do

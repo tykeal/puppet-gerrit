@@ -125,6 +125,7 @@ class gerrit (
   validate_hash($gerrit_site_options)
   validate_string($gerrit_version)
   validate_bool($install_git)
+  validate_bool($install_gitweb)
   validate_bool($install_java)
   validate_bool($manage_database)
   validate_bool($manage_site_skin)
@@ -146,10 +147,37 @@ Allowed values are true, false, 'manual'.")
   anchor { 'gerrit::begin': }
   anchor { 'gerrit::end': }
 
-  include '::gerrit::install'
-  include '::gerrit::config'
-  include '::gerrit::initialize'
-  include '::gerrit::service'
+  class { '::gerrit::install':
+    download_location => $download_location,
+    gerrit_home       => $gerrit_home,
+    gerrit_version    => $gerrit_version,
+    install_java      => $install_java,
+    install_git       => $install_git,
+    install_gitweb    => $install_gitweb,
+    options           => $options,
+  }
+
+  class { '::gerrit::config':
+    db_tag                  => $db_tag,
+    default_secure_options  => $gerrit::params::default_secure_options,
+    gerrit_home             => $gerrit_home,
+    gerrit_site_options     => $gerrit_site_options,
+    manage_database         => $manage_database,
+    manage_firewall         => $manage_firewall,
+    manage_site_skin        => $manage_site_skin,
+    options                 => $options,
+    override_secure_options => $override_secure_options,
+  }
+
+  class { '::gerrit::initialize':
+    gerrit_home    => $gerrit_home,
+    gerrit_version => $gerrit_version,
+    options        => $options,
+  }
+
+  class { '::gerrit::service':
+    service_enabled => $service_enabled,
+  }
 
   Anchor['gerrit::begin'] ->
     Class['gerrit::install'] ->
