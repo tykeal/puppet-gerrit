@@ -176,9 +176,10 @@ class gerrit::config (
   # If their values are set to GENERATE we need to do so
   $generate_secure_options = {
     'auth'                      => {
-      'registerEmailPrivateKey' => fqdn_token_string(34),
-      'restTokenPrivateKey'     => fqdn_token_string(34,
-        inline_template('<%= @fqdn.length %>')),
+      'registerEmailPrivateKey' => fqdn_rand_string(34, '',
+        'registerEmailPrivateKey'),
+      'restTokenPrivateKey'     => fqdn_rand_string(34, '',
+        'restTokenPrivateKey'),
     },
   }
 

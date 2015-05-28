@@ -82,7 +82,7 @@ describe 'gerrit::config', :type => :class do
         'owner'   => 'gerrit',
         'group'   => 'gerrit',
         'mode'    => '0600',
-        'content' => "; MANAGED BY PUPPET\n\n[auth]\n\tregisterEmailPrivateKey = mScmLr+OfBFQVPwEWxwrqlF9lXa3j7ExDU\n\trestTokenPrivateKey = datdNYTYs7Msc097wHsCu2RhqGtm1TGj9l\n\n",
+        'content' => "; MANAGED BY PUPPET\n\n[auth]\n\tregisterEmailPrivateKey = Hf8yvvCrs6dDBEc6WczhlEJD7rJGOHe7hr\n\trestTokenPrivateKey = 39v9y20F3nCQglWvDXFIXMCy9qORHWwxTO\n\n",
         ) }
     it { is_expected.to contain_gerrit__config__git_config('gerrit.config').with(
         'config_file' => '/opt/gerrit/etc/gerrit.config',
