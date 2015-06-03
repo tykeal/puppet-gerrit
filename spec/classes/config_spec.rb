@@ -292,7 +292,7 @@ describe 'gerrit::config', :type => :class do
       }
     }
 
-    it { is_expected.to raise_error(Puppet::PreformattedError,
+    it { is_expected.to raise_error(Puppet::Error,
       /No static_source defined /) }
   end
 
