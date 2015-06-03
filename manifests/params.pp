@@ -53,6 +53,9 @@
 #   pushed so that Gerrit does not need to be restarted should you later
 #   decide to add skins.
 #
+# [*manage_static_site*]
+#   Should we manage the contents of ${gerrit_home}/static?
+#
 # [*service_enabled*]
 #   Should the Gerrit service be enabled? If true (the default) then the
 #   service will be configured to start during boot as force started.
@@ -113,6 +116,7 @@ class gerrit::params {
   $manage_database    = true
   $manage_firewall    = true
   $manage_site_skin   = true
+  $manage_static_site = false
   $service_enabled    = true
 
   # default options hash

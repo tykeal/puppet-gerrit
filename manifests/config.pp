@@ -52,6 +52,11 @@
 #   passing an options hash to gerrit_site_options will override the
 #   default "blank" skin files.
 #
+# [*manage_static_site*]
+#   Should the ~gerrit/static structure be managed by the module.  If
+#   true then static_source must be set.
+#   default false
+#
 # [*options*]
 #   A variable hash for configuration settings of Gerrit. The base class
 #   will take the default options from gerrit::params and combine it
@@ -61,6 +66,11 @@
 # [*override_secure_options*]
 #   The override_secure_options hash that should have been passed to the
 #   base gerrit class
+#
+# [*static_source*]
+#   A File resource source that will be recursively pushed if
+#   manage_static_site is set to true. All files in the source will be
+#   pushed to the ~gerrit/site
 #
 # === Authors
 #
@@ -78,8 +88,10 @@ class gerrit::config (
   $manage_database,
   $manage_firewall,
   $manage_site_skin,
+  $manage_static_site,
   $options,
   $override_secure_options,
+  $static_source
 ) {
   validate_string($db_tag)
   validate_hash($default_secure_options)
@@ -88,8 +100,10 @@ class gerrit::config (
   validate_bool($manage_database)
   validate_bool($manage_firewall)
   validate_bool($manage_site_skin)
+  validate_bool($manage_static_site)
   validate_hash($options)
   validate_hash($override_secure_options)
+  validate_string($static_source)
 
   $gerrit_user = $options['container']['user']
   validate_string($gerrit_user)
@@ -142,6 +156,26 @@ class gerrit::config (
       owner  => $gerrit_user,
       group  => $gerrit_user,
       source => $gerrit_footer,
+    }
+  }
+
+  # manage static site content
+  if $manage_static_site {
+    # we need something, we can't easily check for all types of valid
+    # File resource sources, but it should be something _other_ than ''
+    if empty($static_source) {
+      fail('No static_source defined for gerrit static site')
+    }
+
+    # we could still do a validate string but at this point we should be
+    # pretty confidant we're dealing with something relatively valid
+    file { "${gerrit_home}/static":
+      ensure  => directory,
+      owner   => $gerrit_user,
+      group   => $gerrit_user,
+      source  => $static_source,
+      recurse => true,
+      purge   => true,
     }
   }
 

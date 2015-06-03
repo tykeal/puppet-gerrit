@@ -66,6 +66,11 @@
 #   passing an options hash to gerrit_site_options will override the
 #   default "blank" skin files.
 #
+# [*manage_static_site*]
+#   Should the ~gerrit/static structure be managed by the module.  If
+#   true then static_source must be set.
+#   default false
+#
 # [*override_options*]
 #   A variable hash for configuration settings of Gerrit. Please see
 #   gerrit::params for the default_options hash
@@ -82,6 +87,11 @@
 #     notifications will behave per normal when a service is configured
 #     with enable => manual. The service is not specifically started or
 #     stopped
+#
+# [*static_source*]
+#   A File resource source that will be recursively pushed if
+#   manage_static_site is set to true. All files in the source will be
+#   pushed to the ~gerrit/site
 #
 # === Variables
 #
@@ -113,9 +123,11 @@ class gerrit (
   $manage_database          = $gerrit::params::manage_database,
   $manage_firewall          = $gerrit::params::manage_firewall,
   $manage_site_skin         = $gerrit::params::manage_site_skin,
+  $manage_static_site       = $gerrit::params::manage_static_site,
   $override_options         = {},
   $override_secure_options  = {},
-  $service_enabled          = $gerrit::params::service_enabled
+  $service_enabled          = $gerrit::params::service_enabled,
+  $static_source            = ''
 ) inherits gerrit::params {
 
   # Make sure that all of the params are properly formated
@@ -129,8 +141,10 @@ class gerrit (
   validate_bool($install_java)
   validate_bool($manage_database)
   validate_bool($manage_site_skin)
+  validate_bool($manage_static_site)
   validate_hash($override_options)
   validate_hash($override_secure_options)
+  validate_string($static_source)
 
   unless is_bool($service_enabled) {
     validate_re($service_enabled, '^manual$',
@@ -165,8 +179,10 @@ Allowed values are true, false, 'manual'.")
     manage_database         => $manage_database,
     manage_firewall         => $manage_firewall,
     manage_site_skin        => $manage_site_skin,
+    manage_static_site      => $manage_static_site,
     options                 => $options,
     override_secure_options => $override_secure_options,
+    static_source           => $static_source,
   }
 
   class { '::gerrit::initialize':
