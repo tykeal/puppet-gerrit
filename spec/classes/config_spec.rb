@@ -73,6 +73,11 @@ describe 'gerrit::config', :type => :class do
         'group'   => 'gerrit',
         'source'  => 'puppet:///modules/gerrit/skin/GerritSiteFooter.html',
         ) }
+    it { is_expected.to contain_file('/opt/gerrit/static').with(
+        'ensure'  => 'directory',
+        'owner'   => 'gerrit',
+        'group'   => 'gerrit',
+        ) }
     it { is_expected.to contain_file('/opt/gerrit/etc/gerrit.config').with(
         'ensure'  => 'file',
         'owner'   => 'gerrit',

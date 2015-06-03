@@ -178,6 +178,14 @@ class gerrit::config (
       purge   => true,
     }
   }
+  else {
+    # we still want to make sure that ${gerrit_home}/static is created
+    file { "${gerrit_home}/static":
+      ensure => directory,
+      owner  => $gerrit_user,
+      group  => $gerrit_user,
+    }
+  }
 
   # link up the service script
   file { 'gerrit_init_script':

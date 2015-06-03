@@ -110,7 +110,6 @@ class gerrit::install (
       "${gerrit_home}/lib",
       "${gerrit_home}/logs",
       "${gerrit_home}/plugins",
-      "${gerrit_home}/static",
       "${gerrit_home}/tmp",
       $gitpath,
     ]:

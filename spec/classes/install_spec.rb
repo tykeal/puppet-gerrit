@@ -73,7 +73,6 @@ describe 'gerrit::install', :type => :class do
     it { is_expected.to contain_file('/opt/gerrit/lib') }
     it { is_expected.to contain_file('/opt/gerrit/logs') }
     it { is_expected.to contain_file('/opt/gerrit/plugins') }
-    it { is_expected.to contain_file('/opt/gerrit/static') }
     it { is_expected.to contain_file('/opt/gerrit/tmp') }
     it { is_expected.to contain_file('/srv/gerrit') }
     it { is_expected.to contain_exec('download gerrit 2.9.3').with(
