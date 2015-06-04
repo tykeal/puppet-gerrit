@@ -79,6 +79,11 @@
 #   Similar to the override_options hash, this one is used for setting
 #   the options in Gerrit's secure.config
 #
+# [*refresh_service*]
+#   Should the gerrit service be refreshed on modifications to either
+#   the gerrit.config or secure.config?
+#   default true
+#
 # [*service_enabled*]
 #   Determines if the mode the service is configured for:
 #     true: (default) service is ensured started and enabled for reboot
@@ -126,6 +131,7 @@ class gerrit (
   $manage_static_site       = $gerrit::params::manage_static_site,
   $override_options         = {},
   $override_secure_options  = {},
+  $refresh_service          = $gerrit::params::refresh_service,
   $service_enabled          = $gerrit::params::service_enabled,
   $static_source            = ''
 ) inherits gerrit::params {
@@ -144,6 +150,7 @@ class gerrit (
   validate_bool($manage_static_site)
   validate_hash($override_options)
   validate_hash($override_secure_options)
+  validate_bool($refresh_service)
   validate_string($static_source)
 
   unless is_bool($service_enabled) {
@@ -201,4 +208,12 @@ Allowed values are true, false, 'manual'.")
     Class['gerrit::initialize'] ->
     Class['gerrit::service'] ->
   Anchor['gerrit::end']
+
+  if ($refresh_service) {
+    # gerrit.config and secure.config should refresh service
+    # We do this outside the classes because they don't have internal
+    # dependencies on each other so can't test / compile properly
+    Gerrit::Config::Git_config['gerrit.config'] ~> Class['gerrit::service']
+    Gerrit::Config::Git_config['secure.config'] ~> Class['gerrit::service']
+  }
 }

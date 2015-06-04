@@ -56,6 +56,10 @@
 # [*manage_static_site*]
 #   Should we manage the contents of ${gerrit_home}/static?
 #
+# [*refresh_service*]
+#   Should the gerrit service be refreshed on changes to gerrit.config
+#   or secure.config?
+#
 # [*service_enabled*]
 #   Should the Gerrit service be enabled? If true (the default) then the
 #   service will be configured to start during boot as force started.
@@ -117,6 +121,7 @@ class gerrit::params {
   $manage_firewall    = true
   $manage_site_skin   = true
   $manage_static_site = false
+  $refresh_service    = true
   $service_enabled    = true
 
   # default options hash
