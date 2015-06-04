@@ -33,11 +33,8 @@ describe 'gerrit::config', :type => :class do
           },
         },
         'gerrit_home'                 => '/opt/gerrit',
-        'gerrit_site_options'         => {},
         'manage_database'             => true,
         'manage_firewall'             => true,
-        'manage_site_skin'            => true,
-        'manage_static_site'          => false,
         'options'                     => {
           'auth'                      => {
             'type'                    => 'OpenID',
@@ -54,30 +51,9 @@ describe 'gerrit::config', :type => :class do
           },
         },
         'override_secure_options'     => {},
-        'static_source'               => '',
       }
     }
 
-    it { is_expected.to contain_file('/opt/gerrit/etc/GerritSite.css').with(
-        'owner'   => 'gerrit',
-        'group'   => 'gerrit',
-        'source'  => 'puppet:///modules/gerrit/skin/GerritSite.css',
-        ) }
-    it { is_expected.to contain_file('/opt/gerrit/etc/GerritSiteHeader.html').with(
-        'owner'   => 'gerrit',
-        'group'   => 'gerrit',
-        'source'  => 'puppet:///modules/gerrit/skin/GerritSiteHeader.html',
-        ) }
-    it { is_expected.to contain_file('/opt/gerrit/etc/GerritSiteFooter.html',
-        'owner'   => 'gerrit',
-        'group'   => 'gerrit',
-        'source'  => 'puppet:///modules/gerrit/skin/GerritSiteFooter.html',
-        ) }
-    it { is_expected.to contain_file('/opt/gerrit/static').with(
-        'ensure'  => 'directory',
-        'owner'   => 'gerrit',
-        'group'   => 'gerrit',
-        ) }
     it { is_expected.to contain_file('/opt/gerrit/etc/gerrit.config').with(
         'ensure'  => 'file',
         'owner'   => 'gerrit',
@@ -110,106 +86,6 @@ describe 'gerrit::config', :type => :class do
     it { is_expected.to contain_class('gerrit::config::firewall') }
   end
 
-  context 'should not have skins when manage_site_skin is false' do
-    let(:params) {
-      {
-        'db_tag'                      => 'test',
-        'default_secure_options'      => {
-          'auth'                      => {
-            'registerEmailPrivateKey' => 'GENERATE',
-            'restTokenPrivateKey'     => 'GENERATE',
-          },
-        },
-        'gerrit_home'                 => '/opt/gerrit',
-        'gerrit_site_options'         => {},
-        'manage_database'             => true,
-        'manage_firewall'             => true,
-        'manage_site_skin'            => false,
-        'manage_static_site'          => false,
-        'options'                     => {
-          'auth'                      => {
-            'type'                    => 'OpenID',
-          },
-          'container'                 => {
-            'user'                    => 'gerrit',
-            'javaHome'                => '/usr/lib/jvm/jre',
-          },
-          'gerrit'                    => {
-            'basePath'                => '/srv/gerrit',
-          },
-          'index'                     => {
-            'type'                    => 'LUCENE',
-          },
-        },
-        'override_secure_options'     => {},
-        'static_source'               => '',
-      }
-    }
-
-    it { is_expected.to_not contain_file('/opt/gerrit/etc/GerritSite.css') }
-    it { is_expected.to_not contain_file('/opt/gerrit/etc/GerritSiteHeader.html') }
-    it { is_expected.to_not contain_file('/opt/gerrit/etc/GerritSiteFooter.html') }
-  end
-
-  context '' do
-    let(:params) {
-      {
-        'db_tag'                      => 'test',
-        'default_secure_options'      => {
-          'auth'                      => {
-            'registerEmailPrivateKey' => 'GENERATE',
-            'restTokenPrivateKey'     => 'GENERATE',
-          },
-        },
-        'gerrit_home'                 => '/var/foo',
-        'gerrit_site_options'         => {
-          'GerritSite.css'            => 'puppet:///private/GerritSite.css',
-          'GerritSiteHeader.html'     => 'puppet:///private/GerritSiteHeader.html',
-          'GerritSiteFooter.html'     => 'puppet:///private/GerritSiteFooter.html',
-        },
-        'manage_database'             => true,
-        'manage_firewall'             => true,
-        'manage_site_skin'            => true,
-        'manage_static_site'          => false,
-        'options'                     => {
-          'auth'                      => {
-            'type'                    => 'OpenID',
-          },
-          'container'                 => {
-            'user'                    => 'foo',
-            'javaHome'                => '/usr/lib/jvm/jre',
-          },
-          'gerrit'                    => {
-            'basePath'                => '/srv/gerrit',
-          },
-          'index'                     => {
-            'type'                    => 'LUCENE',
-          },
-        },
-        'override_secure_options'     => {},
-        'static_source'               => '',
-      }
-    }
-
-    it { is_expected.to contain_file('/var/foo/etc/GerritSite.css').with(
-      'owner'  => 'foo',
-      'group'  => 'foo',
-      'source' => 'puppet:///private/GerritSite.css',
-    ) }
-
-    it { is_expected.to contain_file('/var/foo/etc/GerritSiteHeader.html').with(
-      'owner'  => 'foo',
-      'group'  => 'foo',
-      'source' => 'puppet:///private/GerritSiteHeader.html',
-    ) }
-
-    it { is_expected.to contain_file('/var/foo/etc/GerritSiteFooter.html').with(
-      'owner'  => 'foo',
-      'group'  => 'foo',
-      'source' => 'puppet:///private/GerritSiteFooter.html',
-    ) }
-  end
-
   context 'should use defined values when override_secure_options is set' do
     let(:params) {
       {
@@ -221,11 +97,8 @@ describe 'gerrit::config', :type => :class do
           },
         },
         'gerrit_home'                 => '/opt/gerrit',
-        'gerrit_site_options'         => {},
         'manage_database'             => true,
         'manage_firewall'             => true,
-        'manage_site_skin'            => true,
-        'manage_static_site'          => false,
         'options'                     => {
           'auth'                      => {
             'type'                    => 'OpenID',
@@ -247,108 +120,11 @@ describe 'gerrit::config', :type => :class do
             'restTokenPrivateKey'     => 'bar',
           },
         },
-        'static_source'               => '',
       }
     }
 
     it { is_expected.to contain_file('/opt/gerrit/etc/secure.config').with(
       'content' => "; MANAGED BY PUPPET\n\n[auth]\n\tregisterEmailPrivateKey = foo\n\trestTokenPrivateKey = bar\n\n",
-    ) }
-  end
-
-  context 'should raise an error if manage_static_site is true and no valid static_source' do
-    let(:params) {
-      {
-        'db_tag'                      => 'test',
-        'default_secure_options'      => {
-          'auth'                      => {
-            'registerEmailPrivateKey' => 'GENERATE',
-            'restTokenPrivateKey'     => 'GENERATE',
-          },
-        },
-        'gerrit_home'                 => '/opt/gerrit',
-        'gerrit_site_options'         => {},
-        'manage_database'             => true,
-        'manage_firewall'             => true,
-        'manage_site_skin'            => true,
-        'manage_static_site'          => true,
-        'options'                     => {
-          'auth'                      => {
-            'type'                    => 'OpenID',
-          },
-          'container'                 => {
-            'user'                    => 'gerrit',
-            'javaHome'                => '/usr/lib/jvm/jre',
-          },
-          'gerrit'                    => {
-            'basePath'                => '/srv/gerrit',
-          },
-          'index'                     => {
-            'type'                    => 'LUCENE',
-          },
-        },
-        'override_secure_options'     => {
-          'auth'                      => {
-            'registerEmailPrivateKey' => 'foo',
-            'restTokenPrivateKey'     => 'bar',
-          },
-        },
-        'static_source'               => '',
-      }
-    }
-
-    it { is_expected.to raise_error(Puppet::Error,
-      /No static_source defined /) }
-  end
-
-  context 'should have a File resource for static_site' do
-    let(:params) {
-      {
-        'db_tag'                      => 'test',
-        'default_secure_options'      => {
-          'auth'                      => {
-            'registerEmailPrivateKey' => 'GENERATE',
-            'restTokenPrivateKey'     => 'GENERATE',
-          },
-        },
-        'gerrit_home'                 => '/opt/gerrit',
-        'gerrit_site_options'         => {},
-        'manage_database'             => true,
-        'manage_firewall'             => true,
-        'manage_site_skin'            => true,
-        'manage_static_site'          => true,
-        'options'                     => {
-          'auth'                      => {
-            'type'                    => 'OpenID',
-          },
-          'container'                 => {
-            'user'                    => 'gerrit',
-            'javaHome'                => '/usr/lib/jvm/jre',
-          },
-          'gerrit'                    => {
-            'basePath'                => '/srv/gerrit',
-          },
-          'index'                     => {
-            'type'                    => 'LUCENE',
-          },
-        },
-        'override_secure_options'     => {
-          'auth'                      => {
-            'registerEmailPrivateKey' => 'foo',
-            'restTokenPrivateKey'     => 'bar',
-          },
-        },
-        'static_source'               => 'puppet:///static/site',
-      }
-    }
-
-    it { is_expected.to contain_file('/opt/gerrit/static').with(
-      'ensure'  => 'directory',
-      'owner'   => 'gerrit',
-      'group'   => 'gerrit',
-      'source'  => 'puppet:///static/site',
-      'recurse' => true,
-      'purge'   => true,
     ) }
   end
 end

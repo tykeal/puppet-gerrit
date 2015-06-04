@@ -15,27 +15,31 @@ describe 'gerrit::install', :type => :class do
   # test (these are taken from gerrit::params.pp
   let(:params) {
     {
-      'download_location' => 'https://gerrit-releases.storage.googleapis.com',
-      'gerrit_home'       => '/opt/gerrit',
-      'gerrit_version'    => '2.9.3',
-      'install_git'       => true,
-      'install_gitweb'    => true,
-      'install_java'      => true,
-      'options'           => {
-        'auth'            => {
-          'type'          => 'OpenID',
+      'download_location'   => 'https://gerrit-releases.storage.googleapis.com',
+      'gerrit_home'         => '/opt/gerrit',
+      'gerrit_site_options' => {},
+      'gerrit_version'      => '2.9.3',
+      'install_git'         => true,
+      'install_gitweb'      => true,
+      'install_java'        => true,
+      'manage_site_skin'    => true,
+      'manage_static_site'  => false,
+      'options'             => {
+        'auth'              => {
+          'type'            => 'OpenID',
         },
-        'container'       => {
-          'user'          => 'gerrit',
-          'javaHome'      => '/usr/lib/jvm/jre',
+        'container'         => {
+          'user'            => 'gerrit',
+          'javaHome'        => '/usr/lib/jvm/jre',
         },
-        'gerrit'          => {
-          'basePath'      => '/srv/gerrit',
+        'gerrit'            => {
+          'basePath'        => '/srv/gerrit',
         },
-        'index'           => {
-          'type'          => 'LUCENE',
+        'index'             => {
+          'type'            => 'LUCENE',
         },
       },
+      'static_source'       => '',
     }
   }
 
@@ -60,6 +64,30 @@ describe 'gerrit::install', :type => :class do
         'home' => '/opt/gerrit',
       ) }
 
+    it { is_expected.to contain_file('/opt/gerrit/etc/GerritSite.css').with(
+        'owner'   => 'gerrit',
+        'group'   => 'gerrit',
+        'source'  => 'puppet:///modules/gerrit/skin/GerritSite.css',
+        'require' => 'User[gerrit]',
+        ) }
+    it { is_expected.to contain_file('/opt/gerrit/etc/GerritSiteHeader.html').with(
+        'owner'   => 'gerrit',
+        'group'   => 'gerrit',
+        'source'  => 'puppet:///modules/gerrit/skin/GerritSiteHeader.html',
+        'require' => 'User[gerrit]',
+        ) }
+    it { is_expected.to contain_file('/opt/gerrit/etc/GerritSiteFooter.html',
+        'owner'   => 'gerrit',
+        'group'   => 'gerrit',
+        'source'  => 'puppet:///modules/gerrit/skin/GerritSiteFooter.html',
+        'require' => 'User[gerrit]',
+        ) }
+    it { is_expected.to contain_file('/opt/gerrit/static').with(
+        'ensure'  => 'directory',
+        'owner'   => 'gerrit',
+        'group'   => 'gerrit',
+        'require' => 'User[gerrit]',
+        ) }
     # only need to fully validate one file for properties since the
     # definition should be an array define for all the permissions
     # setting
@@ -101,8 +129,98 @@ describe 'gerrit::install', :type => :class do
 
       should_not contain_package('gitweb')
     end
-  end
 
+    it 'should not have skins when manage_site_skin is false' do
+      params.merge!({'manage_site_skin' => false})
+
+      should_not contain_file('/opt/gerrit/etc/GerritSite.css')
+      should_not contain_file('/opt/gerrit/etc/GerritSiteHeader.html')
+      should_not contain_file('/opt/gerrit/etc/GerritSiteFooter.html')
+    end
+
+    it 'should have different layout when gerrit_user & gerrit_home differ' do
+      params.merge!({ 'gerrit_home' => '/var/foo' })
+      params['options']['container'].merge!({ 'user' => 'foo' })
+
+      should contain_user('foo').with(
+        'home' => '/var/foo',
+      )
+
+      should contain_file('/var/foo/etc/GerritSite.css').with(
+        'owner'   => 'foo',
+        'group'   => 'foo',
+        'source'  => 'puppet:///modules/gerrit/skin/GerritSite.css',
+        'require' => 'User[foo]',
+      )
+
+      should contain_file('/var/foo/etc/GerritSiteHeader.html').with(
+        'owner'   => 'foo',
+        'group'   => 'foo',
+        'source'  => 'puppet:///modules/gerrit/skin/GerritSiteHeader.html',
+        'require' => 'User[foo]',
+      )
+
+      should contain_file('/var/foo/etc/GerritSiteFooter.html',
+        'owner'   => 'foo',
+        'group'   => 'foo',
+        'source'  => 'puppet:///modules/gerrit/skin/GerritSiteFooter.html',
+        'require' => 'User[foo]',
+      )
+
+      should contain_file('/var/foo/static').with(
+        'ensure'  => 'directory',
+        'owner'   => 'foo',
+        'group'   => 'foo',
+        'require' => 'User[foo]',
+      )
+
+      # only need to fully validate one file for properties since the
+      # definition should be an array define for all the permissions
+      # setting
+      should contain_file('/var/foo/bin').with(
+            'ensure'    => 'directory',
+            'owner'     => 'foo',
+            'group'     => 'foo',
+            'require'   => 'User[foo]',
+      )
+
+      should contain_file('/var/foo/etc')
+      should contain_file('/var/foo/lib')
+      should contain_file('/var/foo/logs')
+      should contain_file('/var/foo/plugins')
+      should contain_file('/var/foo/tmp')
+      should contain_file('/srv/gerrit')
+      should contain_exec('download gerrit 2.9.3').with(
+          'cwd'     => '/var/foo/bin',
+          'path'    => [ '/usr/bin', '/usr/sbin' ],
+          'command' => 'curl -s -O https://gerrit-releases.storage.googleapis.com/gerrit-2.9.3.war',
+          'creates' => '/var/foo/bin/gerrit-2.9.3.war',
+          'user'    => 'foo',
+          'group'   => 'foo',
+      )
+    end
+
+    it 'should raise an error if manage_static_site is true and no valid static_source' do
+      params.merge!({ 'manage_static_site' => true })
+
+      should raise_error(Puppet::Error,
+        /No static_source defined /)
+    end
+
+    it 'should have a File resource for static_site' do
+      params.merge!({ 'manage_static_site' => true })
+      params.merge!({ 'static_source' => 'puppet:///static/site' })
+
+      should contain_file('/opt/gerrit/static').with(
+        'ensure'  => 'directory',
+        'owner'   => 'gerrit',
+        'group'   => 'gerrit',
+        'source'  => 'puppet:///static/site',
+        'recurse' => true,
+        'purge'   => true,
+      )
+    end
+  end
 end
 
 # vim: sw=2 ts=2 sts=2 et :

@@ -162,27 +162,27 @@ Allowed values are true, false, 'manual'.")
   anchor { 'gerrit::end': }
 
   class { '::gerrit::install':
-    download_location => $download_location,
-    gerrit_home       => $gerrit_home,
-    gerrit_version    => $gerrit_version,
-    install_java      => $install_java,
-    install_git       => $install_git,
-    install_gitweb    => $install_gitweb,
-    options           => $options,
+    download_location   => $download_location,
+    gerrit_home         => $gerrit_home,
+    gerrit_site_options => $gerrit_site_options,
+    gerrit_version      => $gerrit_version,
+    install_java        => $install_java,
+    install_git         => $install_git,
+    install_gitweb      => $install_gitweb,
+    manage_site_skin    => $manage_site_skin,
+    manage_static_site  => $manage_static_site,
+    options             => $options,
+    static_source       => $static_source,
   }
 
   class { '::gerrit::config':
     db_tag                  => $db_tag,
     default_secure_options  => $gerrit::params::default_secure_options,
     gerrit_home             => $gerrit_home,
-    gerrit_site_options     => $gerrit_site_options,
     manage_database         => $manage_database,
     manage_firewall         => $manage_firewall,
-    manage_site_skin        => $manage_site_skin,
-    manage_static_site      => $manage_static_site,
     options                 => $options,
     override_secure_options => $override_secure_options,
-    static_source           => $static_source,
   }
 
   class { '::gerrit::initialize':
