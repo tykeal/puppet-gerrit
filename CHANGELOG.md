@@ -1,3 +1,15 @@
+##2015-06-04 - Support refresh of service on change to config files
+###Summary
+
+* Resolve Issue #10 where the gerrit service was not being refreshed
+  when gerrit.config or secure.config were changed
+
+##2015-06-03 - Support static site content push
+###Summary
+
+* Start supporting pushing of content to ~gerrit/static which is useful
+  for any custom headers / footers that may be already pushed
+
 ##2015-05-28 - Refactor of code
 ###Summary
 
