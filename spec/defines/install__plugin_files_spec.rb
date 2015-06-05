@@ -13,6 +13,7 @@ describe 'gerrit::install::plugin_files', :type => :define do
   context 'good params' do
     it { is_expected.to contain_file('testplugin').with(
       'ensure' => 'file',
+      'path'   => '/opt/gerrit/plugins/testplugin.jar',
       'source' => '/opt/gerrit/extract_plugins/WEB-INF/plugins/testplugin.jar',
       'owner'  => 'gerrit',
       'group'  => 'gerrit',

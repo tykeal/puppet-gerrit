@@ -7,6 +7,7 @@ define gerrit::install::plugin_files (
 
   file { $name:
     ensure => file,
+    path   => "${gerrit_home}/plugins/${name}.jar",
     source =>
       "${gerrit_home}/extract_plugins/WEB-INF/plugins/${name}.jar",
     owner  => $gerrit_user,
