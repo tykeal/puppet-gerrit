@@ -15,31 +15,38 @@ describe 'gerrit::install', :type => :class do
   # test (these are taken from gerrit::params.pp
   let(:params) {
     {
-      'download_location'   => 'https://gerrit-releases.storage.googleapis.com',
-      'gerrit_home'         => '/opt/gerrit',
-      'gerrit_site_options' => {},
-      'gerrit_version'      => '2.9.3',
-      'install_git'         => true,
-      'install_gitweb'      => true,
-      'install_java'        => true,
-      'manage_site_skin'    => true,
-      'manage_static_site'  => false,
-      'options'             => {
-        'auth'              => {
-          'type'            => 'OpenID',
+      'download_location'       => 'https://gerrit-releases.storage.googleapis.com',
+      'gerrit_home'             => '/opt/gerrit',
+      'gerrit_site_options'     => {},
+      'gerrit_version'          => '2.9.3',
+      'install_default_plugins' => true,
+      'install_git'             => true,
+      'install_gitweb'          => true,
+      'install_java'            => true,
+      'manage_site_skin'        => true,
+      'manage_static_site'      => false,
+      'options'                 => {
+        'auth'                  => {
+          'type'                => 'OpenID',
         },
-        'container'         => {
-          'user'            => 'gerrit',
-          'javaHome'        => '/usr/lib/jvm/jre',
+        'container'             => {
+          'user'                => 'gerrit',
+          'javaHome'            => '/usr/lib/jvm/jre',
         },
-        'gerrit'            => {
-          'basePath'        => '/srv/gerrit',
+        'gerrit'                => {
+          'basePath'            => '/srv/gerrit',
         },
-        'index'             => {
-          'type'            => 'LUCENE',
+        'index'                 => {
+          'type'                => 'LUCENE',
         },
       },
-      'static_source'       => '',
+      'plugin_list'             => [
+        'commit-message-length-validator',
+        'download-commands',
+        'replication',
+        'reviewnotes'
+      ],
+      'static_source'           => '',
     }
   }
 
@@ -111,6 +118,52 @@ describe 'gerrit::install', :type => :class do
         'user'    => 'gerrit',
         'group'   => 'gerrit',
         ) }
+
+    # plugin extraction
+    it { is_expected.to contain_file('/opt/gerrit/extract_plugins').with(
+      'ensure'  => 'directory',
+      'owner'   => 'gerrit',
+      'group'   => 'gerrit',
+      'require' => 'User[gerrit]',
+      ) }
+    it { is_expected.to contain_exec('extract_plugins').with(
+      'cwd'     => '/opt/gerrit/extract_plugins',
+      'path'    => [ '/usr/bin', '/usr/sbin' ],
+      'command' => 'jar xf /opt/gerrit/bin/gerrit-2.9.3.war WEB-INF/plugins',
+      'creates' => '/opt/gerrit/extract_plugins/WEB-INF/plugins',
+      'user'    => 'gerrit',
+      'group'   => 'gerrit',
+      'require' => [
+          'File[/opt/gerrit/extract_plugins]',
+          'Exec[download gerrit 2.9.3]'
+        ],
+      ) }
+
+    # plugin installation
+    it { is_expected.to contain_gerrit__install__plugin_files(
+      'commit-message-length-validator').with(
+        'gerrit_home' => '/opt/gerrit',
+        'gerrit_user' => 'gerrit',
+        'require'     => [
+          'File[/opt/gerrit/plugins]',
+          'Exec[extract_plugins]'
+        ],
+    ) }
+    it { is_expected.to contain_gerrit__install__plugin_files(
+      'download-commands') }
+    it { is_expected.to contain_gerrit__install__plugin_files(
+      'replication') }
+    it { is_expected.to contain_gerrit__install__plugin_files(
+      'reviewnotes') }
+
+    it 'should not have any plugins if install_default_plugins is false' do
+      params.merge!({ 'install_default_plugins' => false })
+
+      should_not contain_gerrit__install__plugin__files('commit-message-length-validator')
+      should_not contain_gerrit__install__plugin__files('download-commands')
+      should_not contain_gerrit__install__plugin__files('replication')
+      should_not contain_gerrit__install__plugin__files('reviewnotes')
+    end
 
     it 'should not have java when install_java is false' do
       params.merge!({'install_java' => false})
@@ -220,6 +273,52 @@ describe 'gerrit::install', :type => :class do
         'purge'   => true,
       )
     end
+  end
+
+  context 'with limited plugins' do
+    let(:params) {
+      {
+        'download_location'       => 'https://gerrit-releases.storage.googleapis.com',
+        'gerrit_home'             => '/opt/gerrit',
+        'gerrit_site_options'     => {},
+        'gerrit_version'          => '2.9.3',
+        'install_default_plugins' => true,
+        'install_git'             => true,
+        'install_gitweb'          => true,
+        'install_java'            => true,
+        'manage_site_skin'        => true,
+        'manage_static_site'      => false,
+        'options'                 => {
+          'auth'                  => {
+            'type'                => 'OpenID',
+          },
+          'container'             => {
+            'user'                => 'gerrit',
+            'javaHome'            => '/usr/lib/jvm/jre',
+          },
+          'gerrit'                => {
+            'basePath'            => '/srv/gerrit',
+          },
+          'index'                 => {
+            'type'                => 'LUCENE',
+          },
+        },
+        'plugin_list'             => [
+          'reviewnotes'
+        ],
+        'static_source'           => '',
+      }
+    }
+
+    it { is_expected.to contain_gerrit__install__plugin_files(
+      'reviewnotes') }
+
+    it { is_expected.to_not contain_gerrit__install__plugin_files(
+      'commit-message-length-validator') }
+    it { is_expected.to_not contain_gerrit__install__plugin_files(
+      'download-commands') }
+    it { is_expected.to_not contain_gerrit__install__plugin_files(
+      'replication') }
   end
 end
 

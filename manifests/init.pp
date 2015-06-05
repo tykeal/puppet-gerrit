@@ -32,6 +32,11 @@
 # [*gerrit_version*]
 #   The version of the Gerrit war that will be downloaded
 #
+# [*install_default_plugins*]
+#   Should the default plugins be installed? If true (default) then use
+#   the plugin_list array to specify which plugins specifically should
+#   be installed.
+#
 # [*install_git*]
 #   Should this module make sure that git is installed? (NOTE: a git
 #   installation is required for Gerrit to be able to operate. If this
@@ -79,6 +84,11 @@
 #   Similar to the override_options hash, this one is used for setting
 #   the options in Gerrit's secure.config
 #
+# [*plugin_list*]
+#   An array specifying the default plugins that should be installed.
+#   The names are specified without the .jar
+#   The current plugins auto-installed are all from gerrit v2.9.3
+#
 # [*refresh_service*]
 #   Should the gerrit service be refreshed on modifications to either
 #   the gerrit.config or secure.config?
@@ -122,6 +132,7 @@ class gerrit (
   $gerrit_home              = $gerrit::params::gerrit_home,
   $gerrit_site_options      = {},
   $gerrit_version           = $gerrit::params::gerrit_version,
+  $install_default_plugins  = $gerrit::params::install_default_plugins,
   $install_git              = $gerrit::params::install_git,
   $install_gitweb           = $gerrit::params::install_gitweb,
   $install_java             = $gerrit::params::install_java,
@@ -131,6 +142,7 @@ class gerrit (
   $manage_static_site       = $gerrit::params::manage_static_site,
   $override_options         = {},
   $override_secure_options  = {},
+  $plugin_list              = $gerrit::params::plugin_list,
   $refresh_service          = $gerrit::params::refresh_service,
   $service_enabled          = $gerrit::params::service_enabled,
   $static_source            = ''
@@ -142,6 +154,7 @@ class gerrit (
   validate_absolute_path($gerrit_home)
   validate_hash($gerrit_site_options)
   validate_string($gerrit_version)
+  validate_bool($install_default_plugins)
   validate_bool($install_git)
   validate_bool($install_gitweb)
   validate_bool($install_java)
@@ -150,6 +163,7 @@ class gerrit (
   validate_bool($manage_static_site)
   validate_hash($override_options)
   validate_hash($override_secure_options)
+  validate_array($plugin_list)
   validate_bool($refresh_service)
   validate_string($static_source)
 
@@ -169,17 +183,19 @@ Allowed values are true, false, 'manual'.")
   anchor { 'gerrit::end': }
 
   class { '::gerrit::install':
-    download_location   => $download_location,
-    gerrit_home         => $gerrit_home,
-    gerrit_site_options => $gerrit_site_options,
-    gerrit_version      => $gerrit_version,
-    install_java        => $install_java,
-    install_git         => $install_git,
-    install_gitweb      => $install_gitweb,
-    manage_site_skin    => $manage_site_skin,
-    manage_static_site  => $manage_static_site,
-    options             => $options,
-    static_source       => $static_source,
+    download_location       => $download_location,
+    gerrit_home             => $gerrit_home,
+    gerrit_site_options     => $gerrit_site_options,
+    gerrit_version          => $gerrit_version,
+    install_default_plugins => $install_default_plugins,
+    install_java            => $install_java,
+    install_git             => $install_git,
+    install_gitweb          => $install_gitweb,
+    manage_site_skin        => $manage_site_skin,
+    manage_static_site      => $manage_static_site,
+    options                 => $options,
+    plugin_list             => $plugin_list,
+    static_source           => $static_source,
   }
 
   class { '::gerrit::config':

@@ -35,6 +35,11 @@
 # [*gerrit_version*]
 #   The version of the Gerrit war that will be downloaded
 #
+# [*install_default_plugins*]
+#   Should the default plugins be installed? If true (default) then use
+#   the plugin_list array to specify which plugins specifically should
+#   be installed.
+#
 # [*install_git*]
 #   Should this module make sure that git is installed? (NOTE: a git
 #   installation is required for Gerrit to be able to operate. If this
@@ -62,6 +67,11 @@
 #   true then static_source must be set.
 #   default false
 #
+# [*plugin_list*]
+#   An array specifying the default plugins that should be installed.
+#   The names are specified without the .jar
+#   The current plugins auto-installed are all from gerrit v2.9.3
+#
 # [*options*]
 #   A variable hash for configuration settings of Gerrit. The base class
 #   will take the default options from gerrit::params and combine it
@@ -86,12 +96,14 @@ class gerrit::install (
   $gerrit_home,
   $gerrit_site_options,
   $gerrit_version,
+  $install_default_plugins,
   $install_git,
   $install_gitweb,
   $manage_site_skin,
   $manage_static_site,
   $install_java,
   $options,
+  $plugin_list,
   $static_source
 ) {
   # Revalidate our variables just to be safe
@@ -99,11 +111,13 @@ class gerrit::install (
   validate_absolute_path($gerrit_home)
   validate_hash($gerrit_site_options)
   validate_string($gerrit_version)
+  validate_bool($install_default_plugins)
   validate_bool($install_git)
   validate_bool($install_gitweb)
   validate_bool($install_java)
   validate_bool($manage_site_skin)
   validate_bool($manage_static_site)
+  validate_array($plugin_list)
   validate_hash($options)
 
   # include the java class if we are to install java
@@ -245,5 +259,38 @@ class gerrit::install (
     creates => "${gerrit_home}/bin/gerrit-${gerrit_version}.war",
     user    => $gerrit_user,
     group   => $gerrit_user,
+  }
+
+  # install default plugins if needed
+  if ($install_default_plugins) {
+    file { "${gerrit_home}/extract_plugins":
+      ensure  => directory,
+      owner   => $gerrit_user,
+      group   => $gerrit_user,
+      require => User[$gerrit_user],
+    }
+
+    exec{ 'extract_plugins':
+      cwd     => "${gerrit_home}/extract_plugins",
+      path    => [ '/usr/bin', '/usr/sbin' ],
+      command => "jar \
+xf ${gerrit_home}/bin/gerrit-${gerrit_version}.war WEB-INF/plugins",
+      creates => "${gerrit_home}/extract_plugins/WEB-INF/plugins",
+      user    => $gerrit_user,
+      group   => $gerrit_user,
+      require => [
+        File["${gerrit_home}/extract_plugins"],
+        Exec["download gerrit ${gerrit_version}"]
+      ],
+    }
+
+    gerrit::install::plugin_files { $plugin_list:
+      gerrit_home => $gerrit_home,
+      gerrit_user => $gerrit_user,
+      require     => [
+        File["${gerrit_home}/plugins"],
+        Exec['extract_plugins']
+      ],
+    }
   }
 }

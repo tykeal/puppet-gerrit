@@ -20,6 +20,11 @@
 # [*download_location*]
 #   Where to download the gerrit war file from
 #
+# [*install_default_plugins*]
+#   Should the default plugins be installed? If true (default) then use
+#   the plugin_list array to specify which plugins specifically should
+#   be installed.
+#
 # [*install_git*]
 #   Should git be installed? (NOTE: A git installation is required for
 #   Gerrit to operate. If true [the default] then ::git will be included
@@ -89,6 +94,11 @@
 #   recommended that these values be overriden with custom strings, but
 #   for ease of setup this system was developed.
 #
+# [*plugin_list*]
+#   An array specifying the default plugins that should be installed.
+#   The names are specified without the .jar
+#   The current plugins auto-installed are all from gerrit v2.9.3
+#
 # === Authors
 #
 # Andrew Grimberg <agrimberg@linuxfoundation.org>
@@ -114,15 +124,16 @@ class gerrit::params {
   $java_home          = '/usr/lib/jvm/jre'
 
   # management flags
-  $install_git        = true
-  $install_gitweb     = true
-  $install_java       = true
-  $manage_database    = true
-  $manage_firewall    = true
-  $manage_site_skin   = true
-  $manage_static_site = false
-  $refresh_service    = true
-  $service_enabled    = true
+  $install_default_plugins = true
+  $install_git             = true
+  $install_gitweb          = true
+  $install_java            = true
+  $manage_database         = true
+  $manage_firewall         = true
+  $manage_site_skin        = true
+  $manage_static_site      = false
+  $refresh_service         = true
+  $service_enabled         = true
 
   # default options hash
   $default_options = {
@@ -148,4 +159,12 @@ class gerrit::params {
       'restTokenPrivateKey'     => 'GENERATE',
     },
   }
+
+  # default plugin list (this is for gerrit 2.9.3)
+  $plugin_list = [
+    'commit-message-length-validator',
+    'download-commands',
+    'replication',
+    'reviewnotes'
+  ]
 }
