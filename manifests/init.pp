@@ -16,24 +16,26 @@
 #   A hash that is used to add additional configuration files to the
 #   gerrit system. The hash is formatted as follows:
 #
-#   extra_configs   => {
-#     config_name1  => {
-#       config_file => 'fully_qualified_path_to_where_file_should_live',
-#       mode        => '0660', # file mode the config should have
-#       options     => {
-#         # This hash is built the same way that the override*options hashes
-#         # are built as it is handed to the same function
-#       },
-#     },
-#     config_name2 => {
-#       config_file => 'fully_qualified_path_to_where_file_should_live',
-#       mode        => '0660', # file mode the config should have
-#       options     => {
-#         # This hash is built the same way that the override*options hashes
-#         # are built as it is handed to the same function
-#       },
+#   extra_configs         => {
+#     replication_conf    => {
+#       config_file       => '/opt/gerrit/etc/replication.config',
+#       mode              => '0644',
+#       options           => {
+#         'remote.github' => {
+#           url           => 'git@github.com:example_com/${name}.git',
+#           push          => [
+#               '+refs/heads/*:refs/heads/*',
+#               '+refs/tags/*:refs/tags/*'
+#           ],
+#           timeout         => '5',
+#           threads         => '5',
+#           authGroup       => 'Replicate Only What This Group Can See',
+#           remoteNameStyle => 'dash',
+#         },
+#       }
 #     },
 #   }
+#
 #
 #   This is most useful for adding needed configuration files needed by
 #   plugins. For instance an example for the replication plugion could

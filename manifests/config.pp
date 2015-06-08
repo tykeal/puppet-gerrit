@@ -52,29 +52,15 @@
 #       mode              => '0644',
 #       options           => {
 #         'remote.github' => {
-#           url           => {
-#             value       =>  'git@github.com:example_com/${name}.git',
-#           },
+#           url           => 'git@github.com:example_com/${name}.git',
 #           push          => [
-#             {
-#               value =>  '+refs/heads/*:refs/heads/*',
-#             },
-#             {
-#               value =>  '+refs/tags/*:refs/tags/*',
-#             }
+#               '+refs/heads/*:refs/heads/*',
+#               '+refs/tags/*:refs/tags/*'
 #           ],
-#           timeout         => {
-#             value         =>  '5',
-#           },
-#           threads         => {
-#             value         =>  '5',
-#           },
-#           authGroup       => {
-#             value         =>  'Replicate Only What This Group Can See',
-#           },
-#           remoteNameStyle => {
-#             value         =>  'dash',
-#           },
+#           timeout         => '5',
+#           threads         => '5',
+#           authGroup       => 'Replicate Only What This Group Can See',
+#           remoteNameStyle => 'dash',
 #         },
 #       }
 #     },

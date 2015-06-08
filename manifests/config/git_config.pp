@@ -21,21 +21,13 @@
 #   is as follows:
 #
 #   options = {
-#     'section'    => {
-#       'variable' => {
-#         'value'  => 'variable value',
-#         'ensure' => 'absent',
-#       },
+#     'section'     => {
+#       'variable1' => 'Some variable',
 #     },
 #     'section.subsec' => {
 #       'variable'     => [
-#         {
-#           'value' => 'variable value',
-#         },
-#         {
-#           'value'  => 'variable value2',
-#           'ensure' => 'absent',
-#         },
+#           'variable value',
+#           'variable value2',
 #       ],
 #     },
 #   }

@@ -147,18 +147,12 @@ describe 'gerrit::config', :type => :class do
             'options'                 => {
               'section1'              => {
                 'option1'             => [
-                  {
-                    'value'           => 'my option 1',
-                  },
-                  {
-                    'value'           => 'second iteration of option 1',
-                  }
+                    'my option 1',
+                    'second iteration of option 1',
                 ],
               },
               'section2.foo'          => {
-                'option2'             => {
-                  'value'             => 'This is in section2 "foo"',
-                },
+                'option2'             => 'This is in section2 "foo"',
               },
             },
           },
@@ -167,9 +161,7 @@ describe 'gerrit::config', :type => :class do
             'mode'                    => '0644',
             'options'                 => {
               'section1'              => {
-                'option1'             => {
-                  'value'             => 'the only option',
-                },
+                'option1'             => 'the only option',
               },
             },
           },
@@ -198,23 +190,17 @@ describe 'gerrit::config', :type => :class do
 
     it { is_expected.to contain_gerrit__config__git_config(
       'extra_config1').with(
-        'config_file'    => '/opt/gerrit/etc/extra.config',
-        'mode'           => '0644',
-        'options'        => {
-          'section1'     => {
-            'option1'    => [
-              {
-                'value'  => 'my option 1',
-              },
-              {
-                'value'  => 'second iteration of option 1',
-              }
+        'config_file'          => '/opt/gerrit/etc/extra.config',
+        'mode'                 => '0644',
+        'options'              => {
+          'section1'           => {
+            'option1'          => [
+                'my option 1',
+                'second iteration of option 1',
             ],
           },
-          'section2.foo' => {
-            'option2'    => {
-              'value'    => 'This is in section2 "foo"',
-            },
+          'section2.foo'       => {
+            'option2'          => 'This is in section2 "foo"',
           },
         },
       ) }
@@ -225,9 +211,7 @@ describe 'gerrit::config', :type => :class do
         'mode'        => '0644',
         'options'     => {
           'section1'  => {
-            'option1' => {
-              'value' => 'the only option',
-            },
+            'option1' => 'the only option',
           },
         },
       ) }
