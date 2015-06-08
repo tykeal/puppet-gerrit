@@ -18,6 +18,68 @@
 #   The default_secure_options hash the base gerrit class should be
 #   passing gerrit::params::default_secure_options
 #
+# [*extra_configs*]
+#   A hash that is used to add additional configuration files to the
+#   gerrit system. The hash is formatted as follows:
+#
+#   extra_configs   => {
+#     config_name1  => {
+#       config_file => 'fully_qualified_path_to_where_file_should_live',
+#       mode        => '0660', # file mode the config should have
+#       options     => {
+#         # This hash is built the same way that the override*options hashes
+#         # are built as it is handed to the same function
+#       },
+#     },
+#     config_name2 => {
+#       config_file => 'fully_qualified_path_to_where_file_should_live',
+#       mode        => '0660', # file mode the config should have
+#       options     => {
+#         # This hash is built the same way that the override*options hashes
+#         # are built as it is handed to the same function
+#       },
+#     },
+#   }
+#
+#   This is most useful for adding needed configuration files needed by
+#   plugins. For instance an example for the replication plugion could
+#   be (assumption that the default gerrit home of /opt/gerrit is used)
+#   See also the options passed to gerrit::config::git_config
+#
+#   extra_configs         => {
+#     replication_conf    => {
+#       config_file       => '/opt/gerrit/etc/replication.config',
+#       mode              => '0644',
+#       options           => {
+#         'remote.github' => {
+#           url           => {
+#             value       =>  'git@github.com:example_com/${name}.git',
+#           },
+#           push          => [
+#             {
+#               value =>  '+refs/heads/*:refs/heads/*',
+#             },
+#             {
+#               value =>  '+refs/tags/*:refs/tags/*',
+#             }
+#           ],
+#           timeout         => {
+#             value         =>  '5',
+#           },
+#           threads         => {
+#             value         =>  '5',
+#           },
+#           authGroup       => {
+#             value         =>  'Replicate Only What This Group Can See',
+#           },
+#           remoteNameStyle => {
+#             value         =>  'dash',
+#           },
+#         },
+#       }
+#     },
+#   }
+#
 # [*gerrit_home*]
 #   The home directory for the gerrit user / installation path
 #
@@ -54,6 +116,7 @@
 class gerrit::config (
   $db_tag,
   $default_secure_options,
+  $extra_configs,
   $gerrit_home,
   $manage_database,
   $manage_firewall,
@@ -62,6 +125,7 @@ class gerrit::config (
 ) {
   validate_string($db_tag)
   validate_hash($default_secure_options)
+  validate_hash($extra_configs)
   validate_absolute_path($gerrit_home)
   validate_bool($manage_database)
   validate_bool($manage_firewall)
@@ -122,6 +186,9 @@ class gerrit::config (
     mode        => '0600',
     options     => $real_secure_options,
   }
+
+  # create any extra configs
+  create_resources(::gerrit::config::git_config, $extra_configs)
 
   class { '::gerrit::config::db':
     db_tag          => $db_tag,

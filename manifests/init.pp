@@ -12,6 +12,68 @@
 # [*download_location*]
 #   Base location for downloading the Gerrit war from
 #
+# [*extra_configs*]
+#   A hash that is used to add additional configuration files to the
+#   gerrit system. The hash is formatted as follows:
+#
+#   extra_configs   => {
+#     config_name1  => {
+#       config_file => 'fully_qualified_path_to_where_file_should_live',
+#       mode        => '0660', # file mode the config should have
+#       options     => {
+#         # This hash is built the same way that the override*options hashes
+#         # are built as it is handed to the same function
+#       },
+#     },
+#     config_name2 => {
+#       config_file => 'fully_qualified_path_to_where_file_should_live',
+#       mode        => '0660', # file mode the config should have
+#       options     => {
+#         # This hash is built the same way that the override*options hashes
+#         # are built as it is handed to the same function
+#       },
+#     },
+#   }
+#
+#   This is most useful for adding needed configuration files needed by
+#   plugins. For instance an example for the replication plugion could
+#   be (assumption that the default gerrit home of /opt/gerrit is used)
+#   See also the options passed to gerrit::config::git_config
+#
+#   extra_configs         => {
+#     replication_conf    => {
+#       config_file       => '/opt/gerrit/etc/replication.config',
+#       mode              => '0644',
+#       options           => {
+#         'remote.github' => {
+#           url           => {
+#             value       =>  'git@github.com:example_com/${name}.git',
+#           },
+#           push          => [
+#             {
+#               value =>  '+refs/heads/*:refs/heads/*',
+#             },
+#             {
+#               value =>  '+refs/tags/*:refs/tags/*',
+#             }
+#           ],
+#           timeout         => {
+#             value         =>  '5',
+#           },
+#           threads         => {
+#             value         =>  '5',
+#           },
+#           authGroup       => {
+#             value         =>  'Replicate Only What This Group Can See',
+#           },
+#           remoteNameStyle => {
+#             value         =>  'dash',
+#           },
+#         },
+#       }
+#     },
+#   }
+#
 # [*gerrit_home*]
 #   The home directory for the gerrit user / installation path
 #
@@ -129,6 +191,7 @@
 class gerrit (
   $db_tag                   = '',
   $download_location        = $gerrit::params::download_location,
+  $extra_configs            = {},
   $gerrit_home              = $gerrit::params::gerrit_home,
   $gerrit_site_options      = {},
   $gerrit_version           = $gerrit::params::gerrit_version,
@@ -151,6 +214,7 @@ class gerrit (
   # Make sure that all of the params are properly formated
   validate_string($db_tag)
   validate_string($download_location)
+  validate_hash($extra_configs)
   validate_absolute_path($gerrit_home)
   validate_hash($gerrit_site_options)
   validate_string($gerrit_version)
@@ -201,6 +265,7 @@ Allowed values are true, false, 'manual'.")
   class { '::gerrit::config':
     db_tag                  => $db_tag,
     default_secure_options  => $gerrit::params::default_secure_options,
+    extra_configs           => $extra_configs,
     gerrit_home             => $gerrit_home,
     manage_database         => $manage_database,
     manage_firewall         => $manage_firewall,

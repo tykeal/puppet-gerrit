@@ -32,6 +32,7 @@ describe 'gerrit::config', :type => :class do
             'restTokenPrivateKey'     => 'GENERATE',
           },
         },
+        'extra_configs'               => {},
         'gerrit_home'                 => '/opt/gerrit',
         'manage_database'             => true,
         'manage_firewall'             => true,
@@ -96,6 +97,7 @@ describe 'gerrit::config', :type => :class do
             'restTokenPrivateKey'     => 'GENERATE',
           },
         },
+        'extra_configs'               => {},
         'gerrit_home'                 => '/opt/gerrit',
         'manage_database'             => true,
         'manage_firewall'             => true,
@@ -127,6 +129,108 @@ describe 'gerrit::config', :type => :class do
       'content' => "; MANAGED BY PUPPET\n\n[auth]\n\tregisterEmailPrivateKey = foo\n\trestTokenPrivateKey = bar\n\n",
     ) }
   end
-end
 
+  context 'with extra_configs defined it should have extra resources' do
+    let(:params) {
+      {
+        'db_tag'                      => 'test',
+        'default_secure_options'      => {
+          'auth'                      => {
+            'registerEmailPrivateKey' => 'GENERATE',
+            'restTokenPrivateKey'     => 'GENERATE',
+          },
+        },
+        'extra_configs'               => {
+          'extra_config1'             => {
+            'config_file'             => '/opt/gerrit/etc/extra.config',
+            'mode'                    => '0644',
+            'options'                 => {
+              'section1'              => {
+                'option1'             => [
+                  {
+                    'value'           => 'my option 1',
+                  },
+                  {
+                    'value'           => 'second iteration of option 1',
+                  }
+                ],
+              },
+              'section2.foo'          => {
+                'option2'             => {
+                  'value'             => 'This is in section2 "foo"',
+                },
+              },
+            },
+          },
+          'extra_config2'             => {
+            'config_file'             => '/opt/gerrit/etc/extra2.config',
+            'mode'                    => '0644',
+            'options'                 => {
+              'section1'              => {
+                'option1'             => {
+                  'value'             => 'the only option',
+                },
+              },
+            },
+          },
+        },
+        'gerrit_home'                 => '/opt/gerrit',
+        'manage_database'             => true,
+        'manage_firewall'             => true,
+        'options'                     => {
+          'auth'                      => {
+            'type'                    => 'OpenID',
+          },
+          'container'                 => {
+            'user'                    => 'gerrit',
+            'javaHome'                => '/usr/lib/jvm/jre',
+          },
+          'gerrit'                    => {
+            'basePath'                => '/srv/gerrit',
+          },
+          'index'                     => {
+            'type'                    => 'LUCENE',
+          },
+        },
+        'override_secure_options'     => {},
+      }
+    }
+
+    it { is_expected.to contain_gerrit__config__git_config(
+      'extra_config1').with(
+        'config_file'    => '/opt/gerrit/etc/extra.config',
+        'mode'           => '0644',
+        'options'        => {
+          'section1'     => {
+            'option1'    => [
+              {
+                'value'  => 'my option 1',
+              },
+              {
+                'value'  => 'second iteration of option 1',
+              }
+            ],
+          },
+          'section2.foo' => {
+            'option2'    => {
+              'value'    => 'This is in section2 "foo"',
+            },
+          },
+        },
+      ) }
+
+    it { is_expected.to contain_gerrit__config__git_config(
+      'extra_config2').with(
+        'config_file' => '/opt/gerrit/etc/extra2.config',
+        'mode'        => '0644',
+        'options'     => {
+          'section1'  => {
+            'option1' => {
+              'value' => 'the only option',
+            },
+          },
+        },
+      ) }
+  end
+end
 # vim: sw=2 ts=2 sts=2 et :
