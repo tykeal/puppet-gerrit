@@ -16,6 +16,39 @@
 #   A hash that is used to add additional configuration files to the
 #   gerrit system. The hash is formatted as follows:
 #
+#   extra_configs               => {$
+#     configID1                 => {$
+#       config_file             => 'fully_qualified_file_name',$
+#       mode                    => '0644',$
+#       options                 => {$
+#         'section1'            => {$
+#           'option1'           => 'basic string option',$
+#           'option2'           => [$
+#             'option2 array entry 1',$
+#             'option2 array entry 2'$
+#           ],$
+#         },$
+#         'section2.subsection' => {$
+#           'option3' => 'option 3 in [section2 "subsection"]'$
+#         },$
+#       },$
+#     },$
+#     configID2                 => {$
+#       config_file             => 'another_fully_qualified_file_name',$
+#       mode                    => '0644',$
+#       options                 => {$
+#         'section1'            => {$
+#           'option1'           => 'one more option string',$
+#         },$
+#       }$
+#     }$
+#   }$
+#
+#   This is most useful for adding needed configuration files needed by
+#   plugins. For instance an example for the replication plugion could
+#   be (assumption that the default gerrit home of /opt/gerrit is used)
+#   See also the options passed to gerrit::config::git_config
+#
 #   extra_configs         => {
 #     replication_conf    => {
 #       config_file       => '/opt/gerrit/etc/replication.config',
@@ -31,46 +64,6 @@
 #           threads         => '5',
 #           authGroup       => 'Replicate Only What This Group Can See',
 #           remoteNameStyle => 'dash',
-#         },
-#       }
-#     },
-#   }
-#
-#
-#   This is most useful for adding needed configuration files needed by
-#   plugins. For instance an example for the replication plugion could
-#   be (assumption that the default gerrit home of /opt/gerrit is used)
-#   See also the options passed to gerrit::config::git_config
-#
-#   extra_configs         => {
-#     replication_conf    => {
-#       config_file       => '/opt/gerrit/etc/replication.config',
-#       mode              => '0644',
-#       options           => {
-#         'remote.github' => {
-#           url           => {
-#             value       =>  'git@github.com:example_com/${name}.git',
-#           },
-#           push          => [
-#             {
-#               value =>  '+refs/heads/*:refs/heads/*',
-#             },
-#             {
-#               value =>  '+refs/tags/*:refs/tags/*',
-#             }
-#           ],
-#           timeout         => {
-#             value         =>  '5',
-#           },
-#           threads         => {
-#             value         =>  '5',
-#           },
-#           authGroup       => {
-#             value         =>  'Replicate Only What This Group Can See',
-#           },
-#           remoteNameStyle => {
-#             value         =>  'dash',
-#           },
 #         },
 #       }
 #     },

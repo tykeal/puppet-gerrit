@@ -1,3 +1,26 @@
+##2015-06-09 - Update to documentation and release
+###Summary
+
+* Update the docs to resolve Issue #6
+
+* Release update metadata for release to version 0.9.0 it would be
+  v1.0.0 if the postgresql exporting was working as the other issues
+  currently logged are nice to haves and not requirements.
+
+##2015-06-08 - Plugin management and extra config files
+###Summary
+
+* Resolve Issue #2, we can now install all or some of the shipped
+  plugins (the all option is the list of plugins that shipped with
+  v2.9.3 of Gerrit)
+
+* Resolve Issue #11 as at least one of the shipped plugins needed to
+  have a configuration file separate from the base gerrit and secure
+  configuration files. It is now possible to manage any number of extra
+  configuration. Removal of the files is not presently support, just the
+  creation and managemnt of the file contents. These files do not cause
+  a refresh of the Gerrit service.
+
 ##2015-06-04 - Support refresh of service on change to config files
 ###Summary
 
