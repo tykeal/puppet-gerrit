@@ -88,7 +88,7 @@ class gerrit::config::firewall (
       proto       => 'tcp',
       state       => ['NEW'],
       action      => 'accept',
-      port        => [$listenUrl_port],
+      dport       => [$listenUrl_port],
       destination => $listenUrl_destination,
     }
 
@@ -96,7 +96,7 @@ class gerrit::config::firewall (
       proto       => 'tcp',
       state       => ['NEW'],
       action      => 'accept',
-      port        => [$listenAddress_port],
+      dport       => [$listenAddress_port],
       destination => $listenAddress_destination,
     }
   }

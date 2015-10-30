@@ -27,13 +27,13 @@ describe 'gerrit::config::firewall', :type => :class do
         'proto'   => 'tcp',
         'state'   => ['NEW'],
         'action'  => 'accept',
-        'port'    => ['8080'],
+        'dport'   => ['8080'],
     ) }
     it { is_expected.to contain_firewall('050 gerrit ssh access').with(
         'proto'   => 'tcp',
         'state'   => ['NEW'],
         'action'  => 'accept',
-        'port'    => ['29418'],
+        'dport'   => ['29418'],
     ) }
   end
 
@@ -69,14 +69,14 @@ describe 'gerrit::config::firewall', :type => :class do
         'state'       => ['NEW'],
         'action'      => 'accept',
         'destination' => '10.0.0.1',
-        'port'        => ['8082'],
+        'dport'       => ['8082'],
     ) }
     it { is_expected.to contain_firewall('050 gerrit ssh access').with(
         'proto'       => 'tcp',
         'state'       => ['NEW'],
         'action'      => 'accept',
         'destination' => '10.0.0.1',
-        'port'        => ['23000'],
+        'dport'       => ['23000'],
     ) }
   end
 end
