@@ -72,11 +72,6 @@ describe 'gerrit::config', :type => :class do
         'config_file' => '/opt/gerrit/etc/gerrit.config',
         'mode'        => '0660',
         ) }
-    it { is_expected.to contain_file('gerrit_init_script').with(
-        'ensure'  => 'link',
-        'path'    => '/etc/init.d/gerrit',
-        'target'  => '/opt/gerrit/bin/gerrit.sh',
-        ) }
     it { is_expected.to contain_file('gerrit_defaults').with(
         'ensure'  => 'file',
         'owner'   => 'gerrit',

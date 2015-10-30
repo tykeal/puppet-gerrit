@@ -150,6 +150,60 @@ class gerrit::install (
     system     => true,
   }
 
+  # service script installation
+  case $::osfamily {
+    'RedHat': {
+      case $::operatingsystem {
+        'Fedora': {
+          if versioncmp($::operatingsystemrelease, '14') >= 0 {
+            $use_systemd = true
+          } else {
+            $use_systemd = false
+          }
+        }
+        # Default to EL systems
+        default: {
+          if versioncmp($::operatingsystemrelease, '7.0') >= 0 {
+            $use_systemd = true
+          } else {
+            $use_systemd = false
+          }
+        }
+      }
+    }
+    # We don't currently support not RH based systems
+    default: {
+      fail("${::osfamily} is not presently supported")
+    }
+  }
+
+  if ($use_systemd) {
+    # Previous versions of this module always used the shipped script
+    # this was a bad thing as puppet on systemd systems has issues
+    # knowing if a service was actually enabled for start on boot so
+    # we're going to make sure the old script is gone
+    file { 'gerrit_init_script':
+      ensure => absent,
+      path   => '/etc/init.d/gerrit',
+    }
+
+    file { 'gerrit_systemd_script':
+      ensure  => file,
+      path    => '/usr/lib/systemd/system/gerrit.service',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template("${module_name}/gerrit.service.erb"),
+    }
+  } else {
+    # link to the init script that ships with gerrit
+    file { 'gerrit_init_script':
+      ensure => link,
+      path   => '/etc/init.d/gerrit',
+      target => "${gerrit_home}/bin/gerrit.sh",
+    }
+  }
+
   # install gerrit site skin bits
   if ($manage_site_skin) {
     ## GerritSite.css

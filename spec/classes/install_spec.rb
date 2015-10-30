@@ -5,10 +5,11 @@ describe 'gerrit::install', :type => :class do
   # Force our osfamily & operatingsystem so that puppetlabs-java
   # doesn't croak on us
   let(:facts) { {
-      :fqdn             => 'my.test.com',
-      :ipaddress        => '10.0.0.1',
-      :osfamily         => 'RedHat',
-      :operatingsystem  => 'Centos'
+      :fqdn                   => 'my.test.com',
+      :ipaddress              => '10.0.0.1',
+      :osfamily               => 'RedHat',
+      :operatingsystem        => 'Centos',
+      :operatingsystemrelease => '6.0'
     } }
 
   # set some default good params so we can override with bad ones in
@@ -70,6 +71,44 @@ describe 'gerrit::install', :type => :class do
     it { is_expected.to contain_user('gerrit').with(
         'home' => '/opt/gerrit',
       ) }
+
+    it { is_expected.to contain_file('gerrit_init_script').with(
+        'ensure' => 'link',
+        'path'   => '/etc/init.d/gerrit',
+        'target' => "#{params['gerrit_home']}/bin/gerrit.sh",
+      ) }
+
+    it 'should have systemd service file for EL7+' do
+      facts.merge!({
+        :operatingsystemrelease => '7.0',
+      })
+
+      should contain_file('gerrit_init_script').with(
+        'ensure' => 'absent',
+        'path'   => '/etc/init.d/gerrit',
+      ) 
+      should contain_file('gerrit_systemd_script').with(
+        'ensure'  => 'file',
+        'path'    => '/usr/lib/systemd/system/gerrit.service',
+        'owner'   => 'root',
+        'group'   => 'root',
+        'mode'    => '0644',
+        'content' => "# WARNING THIS FILE IS MANAGED BY PUPPET
+[Unit]
+Description=Gerrit Code Review
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/default/gerritcodereview
+ExecStart=/usr/bin/java $JAVA_OPTIONS -jar #{params['gerrit_home']}/bin/gerrit.war daemon -d $GERRIT_SITE --run-id `date +%s`.$$
+User=#{params['options']['container']['user']}
+Group=#{params['options']['container']['user']}
+
+[Install]
+WantedBy=multi-user.target
+"
+      )
+    end
 
     it { is_expected.to contain_file('/opt/gerrit/etc/GerritSite.css').with(
         'owner'   => 'gerrit',

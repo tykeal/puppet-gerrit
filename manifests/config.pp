@@ -124,13 +124,6 @@ class gerrit::config (
   anchor { 'gerrit::config::begin': }
   anchor { 'gerrit::config::end': }
 
-  # link up the service script
-  file { 'gerrit_init_script':
-    ensure => link,
-    path   => '/etc/init.d/gerrit',
-    target => "${gerrit_home}/bin/gerrit.sh",
-  }
-
   # we need an /etc/default/gerritcodereview file to specify the
   # gerrit_home
   file { 'gerrit_defaults':
