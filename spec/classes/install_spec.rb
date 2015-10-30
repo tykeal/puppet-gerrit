@@ -100,6 +100,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/default/gerritcodereview
+SyslogIdentifier=gerrit
 ExecStart=/usr/bin/java $JAVA_OPTIONS -jar #{params['gerrit_home']}/bin/gerrit.war daemon -d $GERRIT_SITE
 User=#{params['options']['container']['user']}
 Group=#{params['options']['container']['user']}
