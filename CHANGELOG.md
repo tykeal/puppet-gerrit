@@ -1,3 +1,9 @@
+##2015-10-30 - v0.9.2 - Fix up init scripts
+
+* Make systemd based RH systems use a systemd init instead of the init.d
+  script that ships with gerrit. This fixes issues with puppet
+  constantly trying to ensure that the service is enabled on every run
+
 ##2015-10-30 - v0.9.1 - Update to fix firewall port usage
 
 * Start using dport instead of the less specific port option in the
