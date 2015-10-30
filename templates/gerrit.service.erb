@@ -5,7 +5,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/default/gerritcodereview
-ExecStart=/usr/bin/java $JAVA_OPTIONS -jar <%= @gerrit_home %>/bin/gerrit.war daemon -d $GERRIT_SITE --run-id `date +%s`.$$
+ExecStart=/usr/bin/java $JAVA_OPTIONS -jar <%= @gerrit_home %>/bin/gerrit.war daemon -d $GERRIT_SITE
 User=<%= @gerrit_user %>
 Group=<%= @gerrit_user %>
 
