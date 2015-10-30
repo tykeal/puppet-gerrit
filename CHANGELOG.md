@@ -1,3 +1,8 @@
+##2015-10-30 - v0.9.1 - Update to fix firewall port usage
+
+* Start using dport instead of the less specific port option in the
+  firewall rules.
+
 ##2015-06-09 - Update to documentation and release
 ###Summary
 
