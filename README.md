@@ -61,6 +61,7 @@ plugin is either restarted or the Gerrit service is restarted.
   resources
 * May optionally handle setting up the database (potential cross-system
   dependencies)
+* May optionally acquire and install 3rd party plugins
 
 ### Setup Requirements
 
@@ -74,6 +75,8 @@ plugin is either restarted or the Gerrit service is restarted.
   as well as having store configs enabled.
 * `puppetlabs/firewall` >= 1.2.0 is required for the optional firewall
   management
+* `maestrodev/wget` >= 1.5.7 is required for optional 3rd party plugin
+  installation if a http or https url is provided for the plugin source
 
 ## Usage
 

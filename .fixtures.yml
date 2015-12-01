@@ -6,11 +6,6 @@ fixtures:
     java: "puppetlabs/java"
     mysql: "puppetlabs/mysql"
     stdlib: "puppetlabs/stdlib"
-#  repositories:
-#    firewall: "git://github.com/puppetlabs/puppetlabs-firewall.git"
-#    git: "git://github.com/puppetlabs/puppetlabs-git.git"
-#    java: "git://github.com/puppetlabs/puppetlabs-java.git"
-#    mysql: "git://github.com/puppetlabs/puppetlabs-mysql.git"
-#    stdlib: "git://github.com/puppetlabs/puppetlabs-stdlib.git"
+    wget: "maestrodev/wget"
   symlinks:
     gerrit: "#{source_dir}"
