@@ -83,6 +83,21 @@
 #   manage_static_site is set to true. All files in the source will be
 #   pushed to the ~gerrit/site
 #
+# [*third_party_plugins*]
+#   A hash declaring all the third party plugins that are to be
+#   installed and where to acquire them.
+#
+#   Default: {}
+#
+#   example:
+#
+#   third_party_plugins => {
+#     'delete-project'  => {
+#       plugin_source   =>
+#       'https://gerrit-ci.gerritforge.com/view/Plugins-stable-2.11/job/plugin-delete-project-stable-2.11/lastSuccessfulBuild/artifact/buck-out/gen/plugins/delete-project/delete-project.jar',
+#     }
+#   }
+#
 # === Authors
 #
 # Andrew Grimberg <agrimberg@linuxfoundation.org>
@@ -104,7 +119,8 @@ class gerrit::install (
   $install_java,
   $options,
   $plugin_list,
-  $static_source
+  $static_source,
+  $third_party_plugins
 ) {
   # Revalidate our variables just to be safe
   validate_string($download_location)
@@ -119,6 +135,7 @@ class gerrit::install (
   validate_bool($manage_static_site)
   validate_array($plugin_list)
   validate_hash($options)
+  validate_hash($third_party_plugins)
 
   # include the java class if we are to install java
   if ($install_java) {
@@ -346,5 +363,17 @@ xf ${gerrit_home}/bin/gerrit-${gerrit_version}.war WEB-INF/plugins",
         Exec['extract_plugins']
       ],
     }
+  }
+
+  # install third party plugins if needed
+  if (keys($third_party_plugins)) {
+    $third_party_plugin_defaults = {
+      gerrit_home => $gerrit_home,
+      gerrit_user => $gerrit_user,
+    }
+
+    create_resources('gerrit::install::third_party_plugin',
+      $third_party_plugins, $third_party_plugin_defaults
+    )
   }
 }

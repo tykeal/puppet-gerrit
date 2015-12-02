@@ -165,6 +165,21 @@
 #   manage_static_site is set to true. All files in the source will be
 #   pushed to the ~gerrit/site
 #
+# [*third_party_plugins*]
+#   A hash declaring all the third party plugins that are to be
+#   installed and where to acquire them.
+#
+#   Default: {}
+#
+#   example:
+#
+#   third_party_plugins => {
+#     'delete-project'  => {
+#       plugin_source   =>
+#       'https://gerrit-ci.gerritforge.com/view/Plugins-stable-2.11/job/plugin-delete-project-stable-2.11/lastSuccessfulBuild/artifact/buck-out/gen/plugins/delete-project/delete-project.jar',
+#     }
+#   }
+#
 # === Variables
 #
 # No variables are expressly required to be set, there should be sane
@@ -203,7 +218,8 @@ class gerrit (
   $plugin_list              = $gerrit::params::plugin_list,
   $refresh_service          = $gerrit::params::refresh_service,
   $service_enabled          = $gerrit::params::service_enabled,
-  $static_source            = ''
+  $static_source            = '',
+  $third_party_plugins      = {}
 ) inherits gerrit::params {
 
   # Make sure that all of the params are properly formated
@@ -225,6 +241,7 @@ class gerrit (
   validate_array($plugin_list)
   validate_bool($refresh_service)
   validate_string($static_source)
+  validate_hash($third_party_plugins)
 
   unless is_bool($service_enabled) {
     validate_re($service_enabled, '^manual$',
@@ -255,6 +272,7 @@ Allowed values are true, false, 'manual'.")
     options                 => $options,
     plugin_list             => $plugin_list,
     static_source           => $static_source,
+    third_party_plugins     => $third_party_plugins,
   }
 
   class { '::gerrit::config':

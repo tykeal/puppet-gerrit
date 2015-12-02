@@ -48,6 +48,7 @@ describe 'gerrit::install', :type => :class do
         'reviewnotes'
       ],
       'static_source'           => '',
+      'third_party_plugins'     => {},
     }
   }
 
@@ -313,6 +314,24 @@ WantedBy=multi-user.target
         'purge'   => true,
       )
     end
+
+    it 'should install third party plugins' do
+      params.merge!({
+        'third_party_plugins' => {
+          'test-plugin'       => {
+            'plugin_source'   =>
+              'http://plugins.foo/test-plugin.jar',
+          },
+        },
+      })
+
+      should contain_gerrit__install__third_party_plugin(
+        'test-plugin').with(
+        'gerrit_home'   => params['gerrit_home'],
+        'gerrit_user'   => 'gerrit',
+        'plugin_source' => 'http://plugins.foo/test-plugin.jar',
+      )
+    end
   end
 
   context 'with limited plugins' do
@@ -347,6 +366,7 @@ WantedBy=multi-user.target
           'reviewnotes'
         ],
         'static_source'           => '',
+        'third_party_plugins'     => {},
       }
     }
 
