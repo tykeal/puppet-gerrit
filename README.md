@@ -390,6 +390,25 @@ A File resource source that will be recursively pushed if
 `manage_static_site` is set to true. All files in the source will be
 pushed to the ~gerrit/site.
 
+#### `third_party_plugins`
+
+A hash declaring all the third party plugins that should be installed.
+The sources may be file, puppet or http(s) sources.
+
+If http or https resources are defined than`maestrodev/wget` is needed
+for fetching the resources.
+
+The hash looks like the following:
+
+```puppet
+third_party_plugins => {
+  'delete-project'  => {
+    plugin_source   =>
+    'https://gerrit-ci.gerritforge.com/view/Plugins-stable-2.11/job/plugin-delete-project-stable-2.11/lastSuccessfulBuild/artifact/buck-out/gen/plugins/delete-project/delete-project.jar',
+  },
+}
+```
+
 ## Limitations
 
 Tested against RedHat / CentOS v7
