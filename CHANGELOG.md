@@ -1,3 +1,11 @@
+##2015-12-02 - v0.9.3 - Add ability to deploy 3rd party plugins
+
+* Make it possible to specify 3rd party plugins to install. Caveat on
+  the plugins being raw jar files available on the system already (via a
+  file source) in a puppet fileserver or available via HTTP(S).
+  Configuration management for 3rd party config files already exists we
+  just didn't have a way to manage deploying them.
+
 ##2015-10-30 - v0.9.2 - Fix up init scripts
 
 * Make systemd based RH systems use a systemd init instead of the init.d
