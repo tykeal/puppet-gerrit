@@ -34,17 +34,19 @@ describe 'gerrit::install::third_party_plugin', :type => :define do
       params.merge!({'plugin_source' => plug_source})
 
       is_expected.to contain_file("#{params['gerrit_home']}/plugin_cache").with(
-        'ensure' => 'directory',
-        'owner'  => params['gerrit_user'],
+        'ensure' => 'absent',
+        'purge'  => true,
+        'force'  => true,
       )
 
       is_expected.to contain_wget__fetch("download #{title} gerrit plugin").with(
         'source'      => plug_source,
         'destination' => "#{params['gerrit_home']}/plugins/#{title}.jar",
-        'cache_dir'   => "#{params['gerrit_home']}/plugin_cache",
+        'flags'       => ['--timestamping'],
         'timeout'     => 0,
         'verbose'     => false,
-        'require'     => "File[#{params['gerrit_home']}/plugin_cache]",
+        'cache_dir'   => nil,
+        'require'     => nil,
       )
     end
   end

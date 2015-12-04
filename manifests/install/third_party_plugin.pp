@@ -62,13 +62,22 @@ define gerrit::install::third_party_plugin (
     ::wget::fetch { "download ${name} gerrit plugin":
       source      => $plugin_source,
       destination => "${gerrit_home}/plugins/${name}.jar",
-      cache_dir   => "${gerrit_home}/plugin_cache",
+      flags       => ['--timestamping'],
       timeout     => 0,
       verbose     => false,
-      require     => File["${gerrit_home}/plugin_cache"],
     }
 
+    # v0.9.3 used a cache_dir with fetch. Unfortunately that had an
+    # annoying side effect of always producing a notice when the fetch
+    # ran. While not troubling to some people, those using tagmail (or
+    # similar) would always be getting alerts. Since the plugins are
+    # always a single file using timestamping retrieval and placing it
+    # directly will silence the notice.
+    #
+    # The following resource removal will be removed with v1.0.0 as
+    # anyone still using the module will hopefully have stepped through
+    # a version that removed it.
     ensure_resource('file', "${gerrit_home}/plugin_cache",
-      { 'ensure' => 'directory', 'owner' => $gerrit_user })
+      { 'ensure' => 'absent', 'purge' => true, 'force' => true })
   }
 }
