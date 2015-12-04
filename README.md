@@ -220,6 +220,10 @@ gerrit::extra_configs:
         remoteNameStyle: 'dash'
 ```
 
+#### `gerrit_group`
+
+The primary group of the gerrit user. Default value: gerrit
+
 #### `gerrit_home`
 
 The home directory for the gerrit user / installation path. Default
@@ -241,6 +245,10 @@ gerrit_site_options       => {
 If an option is not present then the default "blank" file will be used.
 
 This hash is only used if `manage_site_skin` is true (default)
+
+#### `gerrit_user`
+
+The user that Gerrit runs as. Default gerrit
 
 #### `gerrit_version`
 
@@ -306,6 +314,11 @@ setting: false
 
 If true then `static_source` (see below) is required.
 
+#### `manage_user`
+
+Should this module create the gerrit_user and gerrit_group (true) or
+will they be managed elsewhere (false)? Default setting: true
+
 #### `override_options`
 
 A variable hash for configuration settings of Gerrit. These options are
@@ -318,7 +331,6 @@ default_options => {
     'type'      => 'OpenID',
   },
   'container'   => {
-    'user'      => 'gerrit',
     'javaHome'  => '/usr/lib/jvm/jre',
   },
   'gerrit'      => {

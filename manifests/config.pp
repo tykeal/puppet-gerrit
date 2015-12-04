@@ -103,7 +103,9 @@ class gerrit::config (
   $db_tag,
   $default_secure_options,
   $extra_configs,
+  $gerrit_group,
   $gerrit_home,
+  $gerrit_user,
   $manage_database,
   $manage_firewall,
   $options,
@@ -112,14 +114,13 @@ class gerrit::config (
   validate_string($db_tag)
   validate_hash($default_secure_options)
   validate_hash($extra_configs)
+  validate_string($gerrit_group)
   validate_absolute_path($gerrit_home)
+  validate_string($gerrit_user)
   validate_bool($manage_database)
   validate_bool($manage_firewall)
   validate_hash($options)
   validate_hash($override_secure_options)
-
-  $gerrit_user = $options['container']['user']
-  validate_string($gerrit_user)
 
   anchor { 'gerrit::config::begin': }
   anchor { 'gerrit::config::end': }
@@ -130,7 +131,7 @@ class gerrit::config (
     ensure  => file,
     path    => '/etc/default/gerritcodereview',
     owner   => $gerrit_user,
-    group   => $gerrit_user,
+    group   => $gerrit_group,
     mode    => '0644',
     content => template('gerrit/gerrit_defaults.erb'),
   }

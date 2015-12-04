@@ -13,7 +13,7 @@ describe 'gerrit::config::firewall', :type => :class do
     end
   end
 
-  # with the 'assumed' relavent defaults fall through from a basic
+  # with the 'assumed' relevant defaults fall through from a basic
   # include ::gerrit
   context 'with assumed default parameters' do
     let(:params) {

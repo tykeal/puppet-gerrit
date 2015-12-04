@@ -33,7 +33,9 @@ describe 'gerrit::config', :type => :class do
           },
         },
         'extra_configs'               => {},
+        'gerrit_group'                => 'gerritgroup',
         'gerrit_home'                 => '/opt/gerrit',
+        'gerrit_user'                 => 'gerrituser',
         'manage_database'             => true,
         'manage_firewall'             => true,
         'options'                     => {
@@ -41,7 +43,6 @@ describe 'gerrit::config', :type => :class do
             'type'                    => 'OpenID',
           },
           'container'                 => {
-            'user'                    => 'gerrit',
             'javaHome'                => '/usr/lib/jvm/jre',
           },
           'gerrit'                    => {
@@ -57,14 +58,14 @@ describe 'gerrit::config', :type => :class do
 
     it { is_expected.to contain_file('/opt/gerrit/etc/gerrit.config').with(
         'ensure'  => 'file',
-        'owner'   => 'gerrit',
-        'group'   => 'gerrit',
+        'owner'   => 'gerrituser',
+        'group'   => 'gerritgroup',
         'mode'    => '0660',
         ) }
     it { is_expected.to contain_file('/opt/gerrit/etc/secure.config').with(
         'ensure'  => 'file',
-        'owner'   => 'gerrit',
-        'group'   => 'gerrit',
+        'owner'   => 'gerrituser',
+        'group'   => 'gerritgroup',
         'mode'    => '0600',
         'content' => "; MANAGED BY PUPPET\n\n[auth]\n\tregisterEmailPrivateKey = Hf8yvvCrs6dDBEc6WczhlEJD7rJGOHe7hr\n\trestTokenPrivateKey = 39v9y20F3nCQglWvDXFIXMCy9qORHWwxTO\n\n",
         ) }
@@ -74,8 +75,8 @@ describe 'gerrit::config', :type => :class do
         ) }
     it { is_expected.to contain_file('gerrit_defaults').with(
         'ensure'  => 'file',
-        'owner'   => 'gerrit',
-        'group'   => 'gerrit',
+        'owner'   => 'gerrituser',
+        'group'   => 'gerritgroup',
         'mode'    => '0644',
         'content' => "GERRIT_SITE=/opt/gerrit\n",
         ) }
@@ -93,7 +94,9 @@ describe 'gerrit::config', :type => :class do
           },
         },
         'extra_configs'               => {},
+        'gerrit_group'                => 'gerritgroup',
         'gerrit_home'                 => '/opt/gerrit',
+        'gerrit_user'                 => 'gerrituser',
         'manage_database'             => true,
         'manage_firewall'             => true,
         'options'                     => {
@@ -101,7 +104,6 @@ describe 'gerrit::config', :type => :class do
             'type'                    => 'OpenID',
           },
           'container'                 => {
-            'user'                    => 'gerrit',
             'javaHome'                => '/usr/lib/jvm/jre',
           },
           'gerrit'                    => {
@@ -161,7 +163,9 @@ describe 'gerrit::config', :type => :class do
             },
           },
         },
+        'gerrit_group'                => 'gerritgroup',
         'gerrit_home'                 => '/opt/gerrit',
+        'gerrit_user'                 => 'gerrituser',
         'manage_database'             => true,
         'manage_firewall'             => true,
         'options'                     => {
@@ -169,7 +173,6 @@ describe 'gerrit::config', :type => :class do
             'type'                    => 'OpenID',
           },
           'container'                 => {
-            'user'                    => 'gerrit',
             'javaHome'                => '/usr/lib/jvm/jre',
           },
           'gerrit'                    => {

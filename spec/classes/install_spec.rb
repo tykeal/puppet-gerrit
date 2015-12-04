@@ -17,8 +17,10 @@ describe 'gerrit::install', :type => :class do
   let(:params) {
     {
       'download_location'       => 'https://gerrit-releases.storage.googleapis.com',
+      'gerrit_group'            => 'gerritgroup',
       'gerrit_home'             => '/opt/gerrit',
       'gerrit_site_options'     => {},
+      'gerrit_user'             => 'gerrituser',
       'gerrit_version'          => '2.9.3',
       'install_default_plugins' => true,
       'install_git'             => true,
@@ -26,12 +28,12 @@ describe 'gerrit::install', :type => :class do
       'install_java'            => true,
       'manage_site_skin'        => true,
       'manage_static_site'      => false,
+      'manage_user'             => true,
       'options'                 => {
         'auth'                  => {
           'type'                => 'OpenID',
         },
         'container'             => {
-          'user'                => 'gerrit',
           'javaHome'            => '/usr/lib/jvm/jre',
         },
         'gerrit'                => {
@@ -68,8 +70,9 @@ describe 'gerrit::install', :type => :class do
   context 'with good parameters' do
     it { is_expected.to contain_class('java') }
     it { is_expected.to contain_class('git') }
+    it { is_expected.to contain_group('gerritgroup') }
     it { is_expected.to contain_package('gitweb') }
-    it { is_expected.to contain_user('gerrit').with(
+    it { is_expected.to contain_user('gerrituser').with(
         'home' => '/opt/gerrit',
       ) }
 
@@ -103,8 +106,8 @@ After=network.target
 EnvironmentFile=/etc/default/gerritcodereview
 SyslogIdentifier=gerrit
 ExecStart=/usr/bin/java $JAVA_OPTIONS -jar #{params['gerrit_home']}/bin/gerrit.war daemon -d $GERRIT_SITE
-User=#{params['options']['container']['user']}
-Group=#{params['options']['container']['user']}
+User=#{params['gerrit_user']}
+Group=#{params['gerrit_group']}
 
 [Install]
 WantedBy=multi-user.target
@@ -113,37 +116,37 @@ WantedBy=multi-user.target
     end
 
     it { is_expected.to contain_file('/opt/gerrit/etc/GerritSite.css').with(
-        'owner'   => 'gerrit',
-        'group'   => 'gerrit',
+        'owner'   => 'gerrituser',
+        'group'   => 'gerritgroup',
         'source'  => 'puppet:///modules/gerrit/skin/GerritSite.css',
-        'require' => 'User[gerrit]',
+        'require' => 'User[gerrituser]',
         ) }
     it { is_expected.to contain_file('/opt/gerrit/etc/GerritSiteHeader.html').with(
-        'owner'   => 'gerrit',
-        'group'   => 'gerrit',
+        'owner'   => 'gerrituser',
+        'group'   => 'gerritgroup',
         'source'  => 'puppet:///modules/gerrit/skin/GerritSiteHeader.html',
-        'require' => 'User[gerrit]',
+        'require' => 'User[gerrituser]',
         ) }
     it { is_expected.to contain_file('/opt/gerrit/etc/GerritSiteFooter.html',
-        'owner'   => 'gerrit',
-        'group'   => 'gerrit',
+        'owner'   => 'gerrituser',
+        'group'   => 'gerritgroup',
         'source'  => 'puppet:///modules/gerrit/skin/GerritSiteFooter.html',
-        'require' => 'User[gerrit]',
+        'require' => 'User[gerrituser]',
         ) }
     it { is_expected.to contain_file('/opt/gerrit/static').with(
         'ensure'  => 'directory',
-        'owner'   => 'gerrit',
-        'group'   => 'gerrit',
-        'require' => 'User[gerrit]',
+        'owner'   => 'gerrituser',
+        'group'   => 'gerritgroup',
+        'require' => 'User[gerrituser]',
         ) }
     # only need to fully validate one file for properties since the
     # definition should be an array define for all the permissions
     # setting
     it { is_expected.to contain_file('/opt/gerrit/bin').with(
           'ensure'    => 'directory',
-          'owner'     => 'gerrit',
-          'group'     => 'gerrit',
-          'require'   => 'User[gerrit]',
+          'owner'     => 'gerrituser',
+          'group'     => 'gerritgroup',
+          'require'   => 'User[gerrituser]',
           ) }
     it { is_expected.to contain_file('/opt/gerrit/etc') }
     it { is_expected.to contain_file('/opt/gerrit/lib') }
@@ -156,24 +159,24 @@ WantedBy=multi-user.target
         'path'    => [ '/usr/bin', '/usr/sbin' ],
         'command' => 'curl -s -O https://gerrit-releases.storage.googleapis.com/gerrit-2.9.3.war',
         'creates' => '/opt/gerrit/bin/gerrit-2.9.3.war',
-        'user'    => 'gerrit',
-        'group'   => 'gerrit',
+        'user'    => 'gerrituser',
+        'group'   => 'gerritgroup',
         ) }
 
     # plugin extraction
     it { is_expected.to contain_file('/opt/gerrit/extract_plugins').with(
       'ensure'  => 'directory',
-      'owner'   => 'gerrit',
-      'group'   => 'gerrit',
-      'require' => 'User[gerrit]',
+      'owner'   => 'gerrituser',
+      'group'   => 'gerritgroup',
+      'require' => 'User[gerrituser]',
       ) }
     it { is_expected.to contain_exec('extract_plugins').with(
       'cwd'     => '/opt/gerrit/extract_plugins',
       'path'    => [ '/usr/bin', '/usr/sbin' ],
       'command' => 'jar xf /opt/gerrit/bin/gerrit-2.9.3.war WEB-INF/plugins',
       'creates' => '/opt/gerrit/extract_plugins/WEB-INF/plugins',
-      'user'    => 'gerrit',
-      'group'   => 'gerrit',
+      'user'    => 'gerrituser',
+      'group'   => 'gerritgroup',
       'require' => [
           'File[/opt/gerrit/extract_plugins]',
           'Exec[download gerrit 2.9.3]'
@@ -184,7 +187,7 @@ WantedBy=multi-user.target
     it { is_expected.to contain_gerrit__install__plugin_files(
       'commit-message-length-validator').with(
         'gerrit_home' => '/opt/gerrit',
-        'gerrit_user' => 'gerrit',
+        'gerrit_user' => 'gerrituser',
         'require'     => [
           'File[/opt/gerrit/plugins]',
           'Exec[extract_plugins]'
@@ -233,8 +236,7 @@ WantedBy=multi-user.target
     end
 
     it 'should have different layout when gerrit_user & gerrit_home differ' do
-      params.merge!({ 'gerrit_home' => '/var/foo' })
-      params['options']['container'].merge!({ 'user' => 'foo' })
+      params.merge!({ 'gerrit_group' => 'bar', 'gerrit_home' => '/var/foo', 'gerrit_user'=> 'foo', })
 
       should contain_user('foo').with(
         'home' => '/var/foo',
@@ -242,21 +244,21 @@ WantedBy=multi-user.target
 
       should contain_file('/var/foo/etc/GerritSite.css').with(
         'owner'   => 'foo',
-        'group'   => 'foo',
+        'group'   => 'bar',
         'source'  => 'puppet:///modules/gerrit/skin/GerritSite.css',
         'require' => 'User[foo]',
       )
 
       should contain_file('/var/foo/etc/GerritSiteHeader.html').with(
         'owner'   => 'foo',
-        'group'   => 'foo',
+        'group'   => 'bar',
         'source'  => 'puppet:///modules/gerrit/skin/GerritSiteHeader.html',
         'require' => 'User[foo]',
       )
 
       should contain_file('/var/foo/etc/GerritSiteFooter.html',
         'owner'   => 'foo',
-        'group'   => 'foo',
+        'group'   => 'bar',
         'source'  => 'puppet:///modules/gerrit/skin/GerritSiteFooter.html',
         'require' => 'User[foo]',
       )
@@ -264,7 +266,7 @@ WantedBy=multi-user.target
       should contain_file('/var/foo/static').with(
         'ensure'  => 'directory',
         'owner'   => 'foo',
-        'group'   => 'foo',
+        'group'   => 'bar',
         'require' => 'User[foo]',
       )
 
@@ -274,7 +276,7 @@ WantedBy=multi-user.target
       should contain_file('/var/foo/bin').with(
             'ensure'    => 'directory',
             'owner'     => 'foo',
-            'group'     => 'foo',
+            'group'     => 'bar',
             'require'   => 'User[foo]',
       )
 
@@ -290,7 +292,7 @@ WantedBy=multi-user.target
           'command' => 'curl -s -O https://gerrit-releases.storage.googleapis.com/gerrit-2.9.3.war',
           'creates' => '/var/foo/bin/gerrit-2.9.3.war',
           'user'    => 'foo',
-          'group'   => 'foo',
+          'group'   => 'bar',
       )
     end
 
@@ -307,8 +309,8 @@ WantedBy=multi-user.target
 
       should contain_file('/opt/gerrit/static').with(
         'ensure'  => 'directory',
-        'owner'   => 'gerrit',
-        'group'   => 'gerrit',
+        'owner'   => 'gerrituser',
+        'group'   => 'gerritgroup',
         'source'  => 'puppet:///static/site',
         'recurse' => true,
         'purge'   => true,
@@ -328,7 +330,7 @@ WantedBy=multi-user.target
       should contain_gerrit__install__third_party_plugin(
         'test-plugin').with(
         'gerrit_home'   => params['gerrit_home'],
-        'gerrit_user'   => 'gerrit',
+        'gerrit_user'   => 'gerrituser',
         'plugin_source' => 'http://plugins.foo/test-plugin.jar',
       )
     end
@@ -338,8 +340,10 @@ WantedBy=multi-user.target
     let(:params) {
       {
         'download_location'       => 'https://gerrit-releases.storage.googleapis.com',
+        'gerrit_group'            => 'gerritgroup',
         'gerrit_home'             => '/opt/gerrit',
         'gerrit_site_options'     => {},
+        'gerrit_user'             => 'gerrituser',
         'gerrit_version'          => '2.9.3',
         'install_default_plugins' => true,
         'install_git'             => true,
@@ -347,12 +351,12 @@ WantedBy=multi-user.target
         'install_java'            => true,
         'manage_site_skin'        => true,
         'manage_static_site'      => false,
+        'manage_user'             => true,
         'options'                 => {
           'auth'                  => {
             'type'                => 'OpenID',
           },
           'container'             => {
-            'user'                => 'gerrit',
             'javaHome'            => '/usr/lib/jvm/jre',
           },
           'gerrit'                => {
