@@ -1,3 +1,15 @@
+##2015-12-03 - v0.9.4 - Silence wget::fetch notices
+
+* Third party plugins were being downloaded into a cache directory which
+  causes the wget exec to emit a notice on every puppet run. This notice
+  does not occur if the download is happening in place (provided that
+  the file isn't changing). This update fixes it so that the downloads
+  happen in place, but only if needed.
+
+* v0.9.3 introduced a cache directory as $gerrit_home/plugin_cache.
+  Since this is no longer needed it is now being purged should it exist
+  on disk. This purge will be removed with v1.0.0
+
 ##2015-12-02 - v0.9.3 - Add ability to deploy 3rd party plugins
 
 * Make it possible to specify 3rd party plugins to install. Caveat on
