@@ -8,7 +8,7 @@ EnvironmentFile=/etc/default/gerritcodereview
 SyslogIdentifier=gerrit
 ExecStart=/usr/bin/java $JAVA_OPTIONS -jar <%= @gerrit_home %>/bin/gerrit.war daemon -d $GERRIT_SITE
 User=<%= @gerrit_user %>
-Group=<%= @gerrit_user %>
+Group=<%= @gerrit_group %>
 
 [Install]
 WantedBy=multi-user.target

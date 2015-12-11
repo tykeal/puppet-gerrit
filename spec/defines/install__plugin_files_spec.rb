@@ -5,18 +5,19 @@ describe 'gerrit::install::plugin_files', :type => :define do
 
   let(:params) {
     {
-      'gerrit_home' => '/opt/gerrit',
-      'gerrit_user' => 'gerrit',
+      'gerrit_group' => 'gerritgroup',
+      'gerrit_home'  => '/opt/gerrit',
+      'gerrit_user'  => 'gerrituser',
     }
   }
 
   context 'good params' do
     it { is_expected.to contain_file('testplugin').with(
       'ensure' => 'file',
+      'group'  => 'gerritgroup',
+      'owner'  => 'gerrituser',
       'path'   => '/opt/gerrit/plugins/testplugin.jar',
       'source' => '/opt/gerrit/extract_plugins/WEB-INF/plugins/testplugin.jar',
-      'owner'  => 'gerrit',
-      'group'  => 'gerrit',
     ) }
   end
 

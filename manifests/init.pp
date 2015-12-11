@@ -69,6 +69,9 @@
 #     },
 #   }
 #
+# [*gerrit_group*]
+#   The primary group or gid of the gerrit user. Default is 'gerrit'
+#
 # [*gerrit_home*]
 #   The home directory for the gerrit user / installation path
 #
@@ -85,6 +88,9 @@
 #   used.
 #
 #   This hash is only used if manage_site_skin is true (default)
+#
+# [*gerrit_user*]
+#   The user that Gerrit runs as. Default is 'gerrit'
 #
 # [*gerrit_version*]
 #   The version of the Gerrit war that will be downloaded
@@ -132,6 +138,10 @@
 #   Should the ~gerrit/static structure be managed by the module.  If
 #   true then static_source must be set.
 #   default false
+#
+# [*manage_user*]
+#   Should the creation of the Gerrit $user be managed by the module.
+#   default true
 #
 # [*override_options*]
 #   A variable hash for configuration settings of Gerrit. Please see
@@ -202,8 +212,10 @@ class gerrit (
   $db_tag                   = '',
   $download_location        = $gerrit::params::download_location,
   $extra_configs            = {},
+  $gerrit_group             = $gerrit::params::gerrit_group,
   $gerrit_home              = $gerrit::params::gerrit_home,
   $gerrit_site_options      = {},
+  $gerrit_user              = $gerrit::params::gerrit_user,
   $gerrit_version           = $gerrit::params::gerrit_version,
   $install_default_plugins  = $gerrit::params::install_default_plugins,
   $install_git              = $gerrit::params::install_git,
@@ -213,6 +225,7 @@ class gerrit (
   $manage_firewall          = $gerrit::params::manage_firewall,
   $manage_site_skin         = $gerrit::params::manage_site_skin,
   $manage_static_site       = $gerrit::params::manage_static_site,
+  $manage_user              = $gerrit::params::manage_user,
   $override_options         = {},
   $override_secure_options  = {},
   $plugin_list              = $gerrit::params::plugin_list,
@@ -226,8 +239,10 @@ class gerrit (
   validate_string($db_tag)
   validate_string($download_location)
   validate_hash($extra_configs)
+  validate_string($gerrit_group)
   validate_absolute_path($gerrit_home)
   validate_hash($gerrit_site_options)
+  validate_string($gerrit_user)
   validate_string($gerrit_version)
   validate_bool($install_default_plugins)
   validate_bool($install_git)
@@ -236,6 +251,7 @@ class gerrit (
   validate_bool($manage_database)
   validate_bool($manage_site_skin)
   validate_bool($manage_static_site)
+  validate_bool($manage_user)
   validate_hash($override_options)
   validate_hash($override_secure_options)
   validate_array($plugin_list)
@@ -260,8 +276,10 @@ Allowed values are true, false, 'manual'.")
 
   class { '::gerrit::install':
     download_location       => $download_location,
+    gerrit_group            => $gerrit_group,
     gerrit_home             => $gerrit_home,
     gerrit_site_options     => $gerrit_site_options,
+    gerrit_user             => $gerrit_user,
     gerrit_version          => $gerrit_version,
     install_default_plugins => $install_default_plugins,
     install_java            => $install_java,
@@ -269,6 +287,7 @@ Allowed values are true, false, 'manual'.")
     install_gitweb          => $install_gitweb,
     manage_site_skin        => $manage_site_skin,
     manage_static_site      => $manage_static_site,
+    manage_user             => $manage_user,
     options                 => $options,
     plugin_list             => $plugin_list,
     static_source           => $static_source,
@@ -279,7 +298,9 @@ Allowed values are true, false, 'manual'.")
     db_tag                  => $db_tag,
     default_secure_options  => $gerrit::params::default_secure_options,
     extra_configs           => $extra_configs,
+    gerrit_group            => $gerrit_group,
     gerrit_home             => $gerrit_home,
+    gerrit_user             => $gerrit_user,
     manage_database         => $manage_database,
     manage_firewall         => $manage_firewall,
     options                 => $options,
@@ -287,7 +308,9 @@ Allowed values are true, false, 'manual'.")
   }
 
   class { '::gerrit::initialize':
+    gerrit_group   => $gerrit_group,
     gerrit_home    => $gerrit_home,
+    gerrit_user    => $gerrit_user,
     gerrit_version => $gerrit_version,
     options        => $options,
   }

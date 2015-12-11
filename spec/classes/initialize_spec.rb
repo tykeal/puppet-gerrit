@@ -5,14 +5,15 @@ describe 'gerrit::initialize', :type => :class do
   # testing
   let(:params) {
     {
+      'gerrit_group'      => 'gerritgroup',
       'gerrit_home'       => '/opt/gerrit',
+      'gerrit_user'       => 'gerrituser',
       'gerrit_version'    => '2.9.3',
       'options'           => {
         'auth'            => {
           'type'          => 'OpenID',
         },
         'container'       => {
-          'user'          => 'gerrit',
           'javaHome'      => '/usr/lib/jvm/jre',
         },
         'gerrit'          => {
@@ -44,7 +45,7 @@ describe 'gerrit::initialize', :type => :class do
       'command' => 'java -jar /opt/gerrit/bin/gerrit-2.9.3.war init -d /opt/gerrit --batch && java -jar /opt/gerrit/bin/gerrit.war reindex -d /opt/gerrit',
       'creates' => '/srv/gerrit/All-Projects.git/HEAD',
       'path'    => [ '/usr/bin', '/usr/sbin' ],
-      'user'    => 'gerrit',
+      'user'    => 'gerrituser',
     ) }
   end
 end

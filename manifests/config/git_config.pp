@@ -59,12 +59,13 @@ define gerrit::config::git_config (
 file modes.")
   validate_hash($options)
 
+  $gerrit_group = $gerrit::config::gerrit_group
   $gerrit_user = $gerrit::config::gerrit_user
 
   file { $config_file:
     ensure  => file,
     owner   => $gerrit_user,
-    group   => $gerrit_user,
+    group   => $gerrit_group,
     mode    => $mode,
     content => template('gerrit/git.ini.erb'),
   }

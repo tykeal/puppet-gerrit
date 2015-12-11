@@ -15,6 +15,9 @@
 # [*download_location*]
 #   Base location for downloading the Gerrit war from
 #
+# [*gerrit_group*]
+#   The primary group or gid of the gerrit user. Default is 'gerrit'
+#
 # [*gerrit_home*]
 #   The home directory for the gerrit user / installation path
 #
@@ -31,6 +34,9 @@
 #   used.
 #
 #   This hash is only used if manage_site_skin is true (default)
+#
+# [*gerrit_user*]
+#   The system username that Gerrit runs as. The default is 'gerrit'
 #
 # [*gerrit_version*]
 #   The version of the Gerrit war that will be downloaded
@@ -108,14 +114,17 @@
 #
 class gerrit::install (
   $download_location,
+  $gerrit_group,
   $gerrit_home,
   $gerrit_site_options,
+  $gerrit_user,
   $gerrit_version,
   $install_default_plugins,
   $install_git,
   $install_gitweb,
   $manage_site_skin,
   $manage_static_site,
+  $manage_user,
   $install_java,
   $options,
   $plugin_list,
@@ -133,6 +142,7 @@ class gerrit::install (
   validate_bool($install_java)
   validate_bool($manage_site_skin)
   validate_bool($manage_static_site)
+  validate_bool($manage_user)
   validate_array($plugin_list)
   validate_hash($options)
   validate_hash($third_party_plugins)
@@ -155,16 +165,23 @@ class gerrit::install (
   }
 
   # manage the user
-  $gerrit_user = $options['container']['user']
   validate_string($gerrit_user)
+  validate_string($gerrit_group)
 
-  user { $gerrit_user:
-    ensure     => present,
-    comment    => 'Gerrit Service User',
-    home       => $gerrit_home,
-    managehome => true,
-    shell      => '/bin/bash',
-    system     => true,
+  if ($manage_user) {
+    group { $gerrit_group:
+      ensure => present,
+    }
+    user { $gerrit_user:
+      ensure     => present,
+      comment    => 'Gerrit Service User',
+      gid        => $gerrit_group,
+      home       => $gerrit_home,
+      managehome => true,
+      require    => Group[$gerrit_group],
+      shell      => '/bin/bash',
+      system     => true,
+    }
   }
 
   # service script installation
@@ -234,7 +251,7 @@ class gerrit::install (
 
     file { "${gerrit_home}/etc/GerritSite.css":
       owner   => $gerrit_user,
-      group   => $gerrit_user,
+      group   => $gerrit_group,
       source  => $gerrit_css,
       require => User[$gerrit_user],
     }
@@ -250,7 +267,7 @@ class gerrit::install (
 
     file { "${gerrit_home}/etc/GerritSiteHeader.html":
       owner   => $gerrit_user,
-      group   => $gerrit_user,
+      group   => $gerrit_group,
       source  => $gerrit_header,
       require => User[$gerrit_user],
     }
@@ -266,7 +283,7 @@ class gerrit::install (
 
     file { "${gerrit_home}/etc/GerritSiteFooter.html":
       owner   => $gerrit_user,
-      group   => $gerrit_user,
+      group   => $gerrit_group,
       source  => $gerrit_footer,
       require => User[$gerrit_user],
     }
@@ -285,7 +302,7 @@ class gerrit::install (
     file { "${gerrit_home}/static":
       ensure  => directory,
       owner   => $gerrit_user,
-      group   => $gerrit_user,
+      group   => $gerrit_group,
       source  => $static_source,
       recurse => true,
       purge   => true,
@@ -297,7 +314,7 @@ class gerrit::install (
     file { "${gerrit_home}/static":
       ensure  => directory,
       owner   => $gerrit_user,
-      group   => $gerrit_user,
+      group   => $gerrit_group,
       require => User[$gerrit_user],
     }
   }
@@ -318,7 +335,7 @@ class gerrit::install (
     ]:
     ensure  => directory,
     owner   => $gerrit_user,
-    group   => $gerrit_user,
+    group   => $gerrit_group,
     require => User[$gerrit_user],
   }
 
@@ -329,7 +346,7 @@ class gerrit::install (
     command => "curl -s -O ${download_location}/gerrit-${gerrit_version}.war",
     creates => "${gerrit_home}/bin/gerrit-${gerrit_version}.war",
     user    => $gerrit_user,
-    group   => $gerrit_user,
+    group   => $gerrit_group,
   }
 
   # install default plugins if needed
@@ -337,7 +354,7 @@ class gerrit::install (
     file { "${gerrit_home}/extract_plugins":
       ensure  => directory,
       owner   => $gerrit_user,
-      group   => $gerrit_user,
+      group   => $gerrit_group,
       require => User[$gerrit_user],
     }
 
@@ -348,7 +365,7 @@ class gerrit::install (
 xf ${gerrit_home}/bin/gerrit-${gerrit_version}.war WEB-INF/plugins",
       creates => "${gerrit_home}/extract_plugins/WEB-INF/plugins",
       user    => $gerrit_user,
-      group   => $gerrit_user,
+      group   => $gerrit_group,
       require => [
         File["${gerrit_home}/extract_plugins"],
         Exec["download gerrit ${gerrit_version}"]
@@ -356,9 +373,10 @@ xf ${gerrit_home}/bin/gerrit-${gerrit_version}.war WEB-INF/plugins",
     }
 
     gerrit::install::plugin_files { $plugin_list:
-      gerrit_home => $gerrit_home,
-      gerrit_user => $gerrit_user,
-      require     => [
+      gerrit_group => $gerrit_group,
+      gerrit_home  => $gerrit_home,
+      gerrit_user  => $gerrit_user,
+      require      => [
         File["${gerrit_home}/plugins"],
         Exec['extract_plugins']
       ],

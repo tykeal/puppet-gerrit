@@ -8,11 +8,14 @@
 #   The authentication type that gerrit should use. Default OpenID. See
 #   the Gerrit documentation for valid types
 #
-# [*user*]
-#   The user that Gerrit runs as
-#
 # [*basepath*]
 #   The base location where Gerrit will store the git repositories
+#
+# [*gerrit_group*]
+#   The primary group or gid of the Gerrit user
+#
+# [*gerrit_user*]
+#   The user that Gerrit runs as
 #
 # [*gerrit_version*]
 #   The version of Gerrit to download
@@ -60,6 +63,9 @@
 #
 # [*manage_static_site*]
 #   Should we manage the contents of ${gerrit_home}/static?
+#
+# [*manage_user*]
+#   Should we manage the creation of the Gerrit user?
 #
 # [*refresh_service*]
 #   Should the gerrit service be refreshed on changes to gerrit.config
@@ -112,7 +118,8 @@ class gerrit::params {
   $auth_type           = 'OpenID'
 
   # gerrit base information
-  $user               = 'gerrit'
+  $gerrit_user        = 'gerrit'
+  $gerrit_group       = 'gerrit'
   $basepath           = '/srv/gerrit'
 
   # default gerrit download information
@@ -132,6 +139,7 @@ class gerrit::params {
   $manage_firewall         = true
   $manage_site_skin        = true
   $manage_static_site      = false
+  $manage_user             = true
   $refresh_service         = true
   $service_enabled         = true
 
@@ -141,7 +149,6 @@ class gerrit::params {
       'type'    => $gerrit::params::auth_type,
     },
     'container'  => {
-      'user'     => $gerrit::params::user,
       'javaHome' => $gerrit::params::java_home,
     },
     'gerrit'     => {
