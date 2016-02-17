@@ -84,20 +84,42 @@ class gerrit::config::firewall (
       default:  { $listenAddress_destination = $listenAddress_addr }
     }
 
-    firewall{'050 gerrit webui access':
-      proto       => 'tcp',
-      state       => ['NEW'],
-      action      => 'accept',
-      dport       => [$listenUrl_port],
-      destination => $listenUrl_destination,
-    }
+    unless $options['src_ips'] and $options['src_ips'].size > 0 {
+        firewall{'050 gerrit webui access':
+          proto       => 'tcp',
+          state       => ['NEW'],
+          action      => 'accept',
+          dport       => [$listenUrl_port],
+          destination => $listenUrl_destination,
+        }
 
-    firewall{'050 gerrit ssh access':
-      proto       => 'tcp',
-      state       => ['NEW'],
-      action      => 'accept',
-      dport       => [$listenAddress_port],
-      destination => $listenAddress_destination,
+        firewall{'050 gerrit ssh access':
+          proto       => 'tcp',
+          state       => ['NEW'],
+          action      => 'accept',
+          dport       => [$listenAddress_port],
+          destination => $listenAddress_destination,
+        }
+    } else {
+      $options['src_ips'].each |String $src| {
+        firewall{"050 gerrit webui access ${src}":
+          proto       => 'tcp',
+          state       => ['NEW'],
+          action      => 'accept',
+          source      => $src,
+          dport       => [$listenUrl_port],
+          destination => $listenUrl_destination,
+      }
+
+        firewall{"050 gerrit ssh access ${src}":
+          proto       => 'tcp',
+          state       => ['NEW'],
+          action      => 'accept',
+          source      => $src,
+          dport       => [$listenUrl_port],
+          destination => $listenUrl_destination,
+        }
+      }
     }
   }
 }
