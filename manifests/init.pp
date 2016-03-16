@@ -95,6 +95,12 @@
 # [*gerrit_version*]
 #   The version of the Gerrit war that will be downloaded
 #
+# [*gitweb_package_name*]
+#   The name of the package to use for gitweb installation
+#
+#   Type: string
+#   Default: gitweb
+#
 # [*install_default_plugins*]
 #   Should the default plugins be installed? If true (default) then use
 #   the plugin_list array to specify which plugins specifically should
@@ -217,6 +223,7 @@ class gerrit (
   $gerrit_site_options      = {},
   $gerrit_user              = $gerrit::params::gerrit_user,
   $gerrit_version           = $gerrit::params::gerrit_version,
+  $gitweb_package_name      = $gerrit::params::gitweb_package_name,
   $install_default_plugins  = $gerrit::params::install_default_plugins,
   $install_git              = $gerrit::params::install_git,
   $install_gitweb           = $gerrit::params::install_gitweb,
@@ -244,6 +251,7 @@ class gerrit (
   validate_hash($gerrit_site_options)
   validate_string($gerrit_user)
   validate_string($gerrit_version)
+  validate_string($gitweb_package_name)
   validate_bool($install_default_plugins)
   validate_bool($install_git)
   validate_bool($install_gitweb)
@@ -281,6 +289,7 @@ Allowed values are true, false, 'manual'.")
     gerrit_site_options     => $gerrit_site_options,
     gerrit_user             => $gerrit_user,
     gerrit_version          => $gerrit_version,
+    gitweb_package_name     => $gitweb_package_name,
     install_default_plugins => $install_default_plugins,
     install_java            => $install_java,
     install_git             => $install_git,

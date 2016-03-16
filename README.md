@@ -254,6 +254,11 @@ The user that Gerrit runs as. Default gerrit
 
 The version of the Gerrit war that will be downloaded. Default 2.9.3
 
+#### `gitweb_package_name`
+
+The name of the package to install for gitweb should install_gitweb be true.
+Defaults to gitweb
+
 #### `install_default_plugins`
 
 Should the default plugins be installed? If true (default) then use the
@@ -272,7 +277,7 @@ will work.)
 #### `install_gitweb`
 
 Should this module make sure that gitweb is installed? (NOTE: This will
-use the system package manager to isntall gitweb but will do no extra
+use the system package manager to install gitweb but will do no extra
 configuration as it will be expected to be managed via gerrit)
 
 #### `install_java`

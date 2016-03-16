@@ -20,6 +20,12 @@
 # [*gerrit_version*]
 #   The version of Gerrit to download
 #
+# [*gitweb_package_name*]
+#   The name of the package to use for gitweb installation
+#
+#   Type: string
+#   Default: gitweb
+#
 # [*download_location*]
 #   Where to download the gerrit war file from
 #
@@ -125,6 +131,9 @@ class gerrit::params {
   # default gerrit download information
   $gerrit_version     = '2.9.3'
   $download_location  = 'https://gerrit-releases.storage.googleapis.com'
+
+  # default gitweb package
+  $gitweb_package_name = 'gitweb'
 
   # location information
   $gerrit_home        = '/opt/gerrit'

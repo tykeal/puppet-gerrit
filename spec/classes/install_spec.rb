@@ -22,6 +22,7 @@ describe 'gerrit::install', :type => :class do
       'gerrit_site_options'     => {},
       'gerrit_user'             => 'gerrituser',
       'gerrit_version'          => '2.9.3',
+      'gitweb_package_name'     => 'fooweb',
       'install_default_plugins' => true,
       'install_git'             => true,
       'install_gitweb'          => true,
@@ -71,7 +72,7 @@ describe 'gerrit::install', :type => :class do
     it { is_expected.to contain_class('java') }
     it { is_expected.to contain_class('git') }
     it { is_expected.to contain_group('gerritgroup') }
-    it { is_expected.to contain_package('gitweb') }
+    it { is_expected.to contain_package(params['gitweb_package_name']) }
     it { is_expected.to contain_user('gerrituser').with(
         'home' => '/opt/gerrit',
       ) }
@@ -345,6 +346,7 @@ WantedBy=multi-user.target
         'gerrit_site_options'     => {},
         'gerrit_user'             => 'gerrituser',
         'gerrit_version'          => '2.9.3',
+        'gitweb_package_name'     => 'fooweb',
         'install_default_plugins' => true,
         'install_git'             => true,
         'install_gitweb'          => true,
