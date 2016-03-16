@@ -1,3 +1,20 @@
+##2016-03-16 - v1.0.0 - Roll up and bump to 1.0.0
+
+* Breaking change! Puppet 4 is now required for the module.
+
+* User and group managemnt is now optional - Bob Vincent
+
+* Firewall rules now optionally support source address requirements - Jordan
+  Evans
+
+* Changes to support source address clamping are utilizing Puppet 4+ features to
+  build out the proper firewall rule definition. As the syntax being introduced
+  does not exist before Puppet 4 (or in puppet 3 with future_parser enabled) the
+  supported Puppet version has been bumped to >= 4
+
+* Make gitweb package configurable in support of folks installing packages that
+  are not in the upstream repos (say for instance IUS) - Andrew Grimberg
+
 ##2015-12-03 - v0.9.4 - Silence wget::fetch notices
 
 * Third party plugins were being downloaded into a cache directory which
