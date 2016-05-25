@@ -73,13 +73,7 @@ describe 'gerrit::config', :type => :class do
         'config_file' => '/opt/gerrit/etc/gerrit.config',
         'mode'        => '0660',
         ) }
-    it { is_expected.to contain_file('gerrit_defaults').with(
-        'ensure'  => 'file',
-        'owner'   => 'gerrituser',
-        'group'   => 'gerritgroup',
-        'mode'    => '0644',
-        'content' => "GERRIT_SITE=/opt/gerrit\n",
-        ) }
+    it { is_expected.to_not contain_file('gerrit_defaults') }
     it { is_expected.to contain_class('gerrit::config::firewall') }
   end
 

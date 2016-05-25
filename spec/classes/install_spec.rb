@@ -83,9 +83,36 @@ describe 'gerrit::install', :type => :class do
         'target' => "#{params['gerrit_home']}/bin/gerrit.sh",
       ) }
 
+    it { is_expected.to contain_file('gerrit_defaults').with(
+        'ensure'  => 'file',
+        'owner'   => 'gerrituser',
+        'group'   => 'gerritgroup',
+        'mode'    => '0644',
+        'content' => "GERRIT_SITE=/opt/gerrit\n",
+        ) }
+
     it 'should have systemd service file for EL7+' do
       facts.merge!({
         :operatingsystemrelease => '7.0',
+      })
+
+      params.merge!({
+        'options'         => {
+          'auth'          => {
+            'type'        => 'OpenID',
+          },
+          'container'     => {
+            'javaHome'    => '/usr/lib/jvm/jre',
+            'javaOptions' => 'foo option',
+            'heapLimit'   => '10g',
+          },
+          'gerrit'        => {
+            'basePath'    => '/srv/gerrit',
+          },
+          'index'         => {
+            'type'        => 'LUCENE',
+          },
+        },
       })
 
       should contain_file('gerrit_init_script').with(
@@ -113,6 +140,12 @@ Group=#{params['gerrit_group']}
 [Install]
 WantedBy=multi-user.target
 "
+      )
+
+      should contain_file('gerrit_defaults').with(
+        'content' => "GERRIT_SITE=/opt/gerrit
+JAVA_OPTIONS='foo option -Xmx=10g'
+",
       )
     end
 

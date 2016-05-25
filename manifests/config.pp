@@ -125,17 +125,6 @@ class gerrit::config (
   anchor { 'gerrit::config::begin': }
   anchor { 'gerrit::config::end': }
 
-  # we need an /etc/default/gerritcodereview file to specify the
-  # gerrit_home
-  file { 'gerrit_defaults':
-    ensure  => file,
-    path    => '/etc/default/gerritcodereview',
-    owner   => $gerrit_user,
-    group   => $gerrit_group,
-    mode    => '0644',
-    content => template('gerrit/gerrit_defaults.erb'),
-  }
-
   # gerrit configuration
   ::gerrit::config::git_config { 'gerrit.config':
     config_file => "${gerrit_home}/etc/gerrit.config",

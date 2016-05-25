@@ -219,6 +219,17 @@ class gerrit::install (
     }
   }
 
+  # we need an /etc/default/gerritcodereview file to specify the
+  # gerrit_home
+  file { 'gerrit_defaults':
+    ensure  => file,
+    path    => '/etc/default/gerritcodereview',
+    owner   => $gerrit_user,
+    group   => $gerrit_group,
+    mode    => '0644',
+    content => template('gerrit/gerrit_defaults.erb'),
+  }
+
   if ($use_systemd) {
     # Previous versions of this module always used the shipped script
     # this was a bad thing as puppet on systemd systems has issues
