@@ -1,3 +1,9 @@
+##2016-05-25 - v1.1.0 - Java Tuning
+
+* Allow tuning of Java on systemd based systems (F21+ and EL7+) this was not
+  initially supported. This will utilize the same options as the SysV init
+  script for setting the heapLimit or other generic Java options.
+
 ##2016-03-16 - v1.0.0 - Roll up and bump to 1.0.0
 
 * Breaking change! Puppet 4 is now required for the module.
