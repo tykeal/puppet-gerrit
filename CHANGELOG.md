@@ -1,3 +1,7 @@
+##2016-0611 - v1.1.1 - Fix java max heap parameter
+
+* Java heap parameter Xmx should not have a trailing = before the value
+
 ##2016-05-25 - v1.1.0 - Java Tuning
 
 * Allow tuning of Java on systemd based systems (F21+ and EL7+) this was not
