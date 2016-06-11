@@ -1,4 +1,4 @@
 GERRIT_SITE=<%= @gerrit_home %>
 <% if @use_systemd -%>
-JAVA_OPTIONS='<%= @options['container']['javaOptions'] -%><% if @options['container']['heapLimit'] -%> -Xmx=<%= @options['container']['heapLimit'] -%><% end -%>'
+JAVA_OPTIONS='<%= @options['container']['javaOptions'] -%><% if @options['container']['heapLimit'] -%> -Xmx<%= @options['container']['heapLimit'] -%><% end -%>'
 <% end -%>

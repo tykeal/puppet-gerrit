@@ -144,7 +144,7 @@ WantedBy=multi-user.target
 
       should contain_file('gerrit_defaults').with(
         'content' => "GERRIT_SITE=/opt/gerrit
-JAVA_OPTIONS='foo option -Xmx=10g'
+JAVA_OPTIONS='foo option -Xmx10g'
 ",
       )
     end
