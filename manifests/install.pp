@@ -199,6 +199,7 @@ class gerrit::install (
         'Fedora': {
           if versioncmp($::operatingsystemrelease, '14') >= 0 {
             $use_systemd = true
+            $systemd_path = '/usr/lib/systemd/system'
           } else {
             $use_systemd = false
           }
@@ -207,13 +208,23 @@ class gerrit::install (
         default: {
           if versioncmp($::operatingsystemrelease, '7.0') >= 0 {
             $use_systemd = true
+            $systemd_path = '/usr/lib/systemd/system'
           } else {
             $use_systemd = false
           }
         }
       }
     }
-    # We don't currently support not RH based systems
+    'Debian': {
+      if versioncmp($::operatingsystemrelease, '8') >= 0 {
+        $use_systemd = true
+        $systemd_path = '/lib/systemd/system'
+      }
+      else {
+        fail("${::osfamily} is supported for versions >= 8 (>= jessie)")
+      }
+    }
+    # We don't currently support not RH/Debian based systems
     default: {
       fail("${::osfamily} is not presently supported")
     }
@@ -242,7 +253,7 @@ class gerrit::install (
 
     file { 'gerrit_systemd_script':
       ensure  => file,
-      path    => '/usr/lib/systemd/system/gerrit.service',
+      path    => "${systemd_path}/gerrit.service",
       owner   => 'root',
       group   => 'root',
       mode    => '0644',

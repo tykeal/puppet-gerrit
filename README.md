@@ -17,7 +17,10 @@
 [![Build Status](https://travis-ci.org/tykeal/puppet-gerrit.png)](https://travis-ci.org/tykeal/puppet-gerrit)
 
 This module installs and configures a Gerrit system. It is intended to
-work with Puppet >= v3.7 as that is what it is developed against.
+work with Puppet >= v3.7, =< v.4.2.3 as that is what it is developed
+against.
+For newer puppet versions there is no complete rspec tests coverage
+for now but it may still work.
 
 ## Module Description
 
