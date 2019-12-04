@@ -63,7 +63,7 @@ describe 'gerrit::install', :type => :class do
       expect {
         should compile
       }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
-        /Must pass /)
+        /'third_party_plugins'/)
     end
   end
 

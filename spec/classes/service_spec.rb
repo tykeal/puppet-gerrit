@@ -17,7 +17,7 @@ describe 'gerrit::service', :type => :class do
       expect {
         should compile
       }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
-        /Must pass /)
+        /'service_enabled' /)
     end
   end
 

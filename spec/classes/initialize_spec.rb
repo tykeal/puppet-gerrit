@@ -34,7 +34,7 @@ describe 'gerrit::initialize', :type => :class do
       expect {
         should compile
       }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
-        /Must pass /)
+        /'options'/)
     end
   end
 

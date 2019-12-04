@@ -10,7 +10,7 @@ describe 'gerrit::config::db', :type => :class do
       expect {
         should compile
       }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
-        /Must pass /)
+        /'secure_options'/)
     end
   end
 

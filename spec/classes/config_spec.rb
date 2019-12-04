@@ -16,7 +16,7 @@ describe 'gerrit::config', :type => :class do
       expect {
         should compile
       }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
-        /Must pass /)
+        /'override_secure_options'/)
     end
   end
 
@@ -67,7 +67,7 @@ describe 'gerrit::config', :type => :class do
         'owner'   => 'gerrituser',
         'group'   => 'gerritgroup',
         'mode'    => '0600',
-        'content' => "; MANAGED BY PUPPET\n\n[auth]\n\tregisterEmailPrivateKey = Hf8yvvCrs6dDBEc6WczhlEJD7rJGOHe7hr\n\trestTokenPrivateKey = 39v9y20F3nCQglWvDXFIXMCy9qORHWwxTO\n\n",
+        'content' => "; MANAGED BY PUPPET\n\n[auth]\n\tregisterEmailPrivateKey = 0vYmIO6CeAzI2wVWroMQjG6jHQaz35sqtx\n\trestTokenPrivateKey = S7yu4FuMPH5NYrp1vLMFPm2PgG4nNKfJVw\n\n",
         ) }
     it { is_expected.to contain_gerrit__config__git_config('gerrit.config').with(
         'config_file' => '/opt/gerrit/etc/gerrit.config',

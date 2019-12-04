@@ -5,10 +5,11 @@ describe 'gerrit', :type => :class do
   # Force our osfamily & operatingsystem so that puppetlabs-java
   # doesn't croak on us
   let(:facts) { {
-      :fqdn             => 'my.test.com',
-      :ipaddress        => '10.0.0.1',
-      :osfamily         => 'RedHat',
-      :operatingsystem  => 'Centos'
+      :fqdn                   => 'my.test.com',
+      :ipaddress              => '10.0.0.1',
+      :osfamily               => 'RedHat',
+      :operatingsystem        => 'Centos',
+      :operatingsystemrelease => '7.0',
     } }
 
   context 'with defaults' do
