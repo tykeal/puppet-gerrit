@@ -1,4 +1,4 @@
-rvm: 2.0.0
+rvm: 2.3.1
 notifications:
   email:
     - grimbeaj+travisci@gmail.com
