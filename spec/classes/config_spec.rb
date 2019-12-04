@@ -15,8 +15,7 @@ describe 'gerrit::config', :type => :class do
     it do
       expect {
         should compile
-      }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
-        /'override_secure_options'/)
+      }.to raise_error(RSpec::Expectations::ExpectationNotMetError)
     end
   end
 

@@ -44,8 +44,7 @@ describe 'gerrit::config::db::postgresql', :type => :class do
     it do
       expect {
         should compile
-      }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
-        /'secure_options'/)
+      }.to raise_error(RSpec::Expectations::ExpectationNotMetError)
     end
   end
 

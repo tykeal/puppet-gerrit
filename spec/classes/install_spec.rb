@@ -62,8 +62,7 @@ describe 'gerrit::install', :type => :class do
     it do
       expect {
         should compile
-      }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
-        /'third_party_plugins'/)
+      }.to raise_error(RSpec::Expectations::ExpectationNotMetError)
     end
   end
 

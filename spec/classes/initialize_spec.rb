@@ -33,8 +33,7 @@ describe 'gerrit::initialize', :type => :class do
     it do
       expect {
         should compile
-      }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
-        /'options'/)
+      }.to raise_error(RSpec::Expectations::ExpectationNotMetError)
     end
   end
 
