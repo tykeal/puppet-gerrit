@@ -3,3 +3,4 @@
 .ruby-gemset
 Gemfile.lock
 pkg
+spec/fixtures
