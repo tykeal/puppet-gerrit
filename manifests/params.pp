@@ -159,9 +159,14 @@ class gerrit::params {
     },
     'container'  => {
       'javaHome' => $gerrit::params::java_home,
+      'user'     => $gerrit::params::gerrit_user,
     },
     'gerrit'     => {
       'basePath' => $gerrit::params::basepath,
+      # According to the developers this just needs to be a unique string and
+      # anything can be used. This is a bit easier than some GENERATE
+      # functionality like is needed for the keys below
+      'serverId' => "${::ipaddress}-${::fqdn}",
     },
     'index'  => {
       'type' => 'LUCENE',
