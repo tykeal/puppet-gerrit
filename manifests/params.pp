@@ -176,8 +176,10 @@ class gerrit::params {
   # default secure options hash
   $default_secure_options = {
     'auth'                      => {
-      'registerEmailPrivateKey' => 'GENERATE',
-      'restTokenPrivateKey'     => 'GENERATE',
+      'registerEmailPrivateKey' => fqdn_rand_string(34, '',
+        'registerEmailPrivateKey'),
+      'restTokenPrivateKey'     => fqdn_rand_string(34, '',
+        'restTokenPrivateKey'),
     },
   }
 

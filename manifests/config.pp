@@ -132,22 +132,7 @@ class gerrit::config (
     options     => $options,
   }
 
-  # the secure options
-  # auth.{registerEmailPrivateKey,restTokenPrivateKey} vars have the
-  # option to be auto-generated using the create_token_string function.
-  # If their values are set to GENERATE we need to do so
-  $generate_secure_options = {
-    'auth'                      => {
-      'registerEmailPrivateKey' => fqdn_rand_string(34, '',
-        'registerEmailPrivateKey'),
-      'restTokenPrivateKey'     => fqdn_rand_string(34, '',
-        'restTokenPrivateKey'),
-    },
-  }
-
-  $generated_default_secure_options = merge($default_secure_options,
-    $generate_secure_options)
-  $real_secure_options = merge($generated_default_secure_options,
+  $real_secure_options = merge($default_secure_options,
     $override_secure_options)
 
   ::gerrit::config::git_config { 'secure.config':

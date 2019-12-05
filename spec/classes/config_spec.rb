@@ -27,8 +27,9 @@ describe 'gerrit::config', :type => :class do
         'db_tag'                      => 'test',
         'default_secure_options'      => {
           'auth'                      => {
-            'registerEmailPrivateKey' => 'GENERATE',
-            'restTokenPrivateKey'     => 'GENERATE',
+            # encode results of running fqdn_rand_string for test
+            'registerEmailPrivateKey' => '0vYmIO6CeAzI2wVWroMQjG6jHQaz35sqtx',
+            'restTokenPrivateKey'     => 'S7yu4FuMPH5NYrp1vLMFPm2PgG4nNKfJVw',
           },
         },
         'extra_configs'               => {},
